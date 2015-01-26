@@ -1,2 +1,2 @@
-# DVP-Comman
-Comman data models and scripts for DVP
+# DVP-Common
+Common data models and scripts for DVP
