@@ -14,7 +14,6 @@ var SipExt = SequelizeConn.define('CSDB_SipExtension', {
     Context: Sequelize.STRING,
     Enabled: Sequelize.BOOLEAN,
     Email: Sequelize.STRING,
-    ExtType: Sequelize.STRING,
     ExtraData: Sequelize.STRING,
     CompanyId: Sequelize.INTEGER,
     TenantId: Sequelize.INTEGER,
