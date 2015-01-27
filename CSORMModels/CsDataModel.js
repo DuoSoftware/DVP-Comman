@@ -27,6 +27,21 @@ var SipExt = SequelizeConn.define('CSDB_SipExtension', {
     UpdateTime: Sequelize.DATE
 });
 
+
+var Cloud = Sequelize.define('CSDB_Cluster', {
+    RecordGuid: Sequelize.STRING,
+    Name: Sequelize.STRING,
+    ID: Sequelize.INTEGER,
+    Company: Sequelize.INTEGER,
+    Tenent: Sequelize.INTEGER,
+    Model: Sequelize.INTEGER,
+    Class: Sequelize.STRING,
+    Type: Sequelize.STRING,
+    Category: Sequelize.STRING,
+    IsLoadBalanced: Sequelize.BOOLEAN
+});
+
+
 var Context = SequelizeConn.define('CSDB_Context', {
     Context: Sequelize.STRING,
     Description: Sequelize.STRING,
