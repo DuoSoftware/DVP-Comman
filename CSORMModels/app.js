@@ -1,5 +1,6 @@
 //var seq = require('./CSDataModel.js').sequelize;
-var User = require('./CSDataModel.js').User;
+var model = require('./CSDataModel.js');
+
 //var sleep = require('sleep');
 var http = require('http');
 
@@ -9,6 +10,7 @@ var count = 0;
 
 var searchRecord = function(usr11, pass22)
 {
+
 
     //var pas = pass22
     User
