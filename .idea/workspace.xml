@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e7f1d236-8e16-46bc-8faf-51467670229a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CSORMModels/CsDataModel.js" afterPath="$PROJECT_DIR$/CSORMModels/CsDataModel.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="e7f1d236-8e16-46bc-8faf-51467670229a" name="Default" comment="" />
     <ignored path="DVP-Common.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
