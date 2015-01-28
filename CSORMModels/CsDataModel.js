@@ -31,6 +31,7 @@ var Cloud = SequelizeConn.define('CSDB_Cluster', {
 
     Name: Sequelize.STRING,
     //ID: Sequelize.INTEGER,
+    Activate: Sequelize.BOOLEAN,
     ID: Sequelize.INTEGER,
     Code: Sequelize.INTEGER,
     CompanyId: Sequelize.INTEGER,
@@ -45,7 +46,7 @@ var Cloud = SequelizeConn.define('CSDB_Cluster', {
 
 
 var Network = SequelizeConn.define('CSDB_Network', {
-    Type: Sequelize.string,
+    Type: Sequelize.STRING,
     Owner: Sequelize.INTEGER,
     Network: Sequelize.STRING,
     Mask: Sequelize.INTEGER,

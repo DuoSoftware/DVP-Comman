@@ -20,7 +20,32 @@ var model = require('./CsDataModel.js');
  };
 
  */
+var ActivateCloud = function(id, activeStatus) {
 
+    var status = 0;
+
+
+    model.Cloud.update({
+
+            Activate: activeStatus
+
+        }, {
+            ID: id
+        }
+    ).complete(function (err) {
+            if (err) {
+                console.log("Cloud model update false ->", err)
+            } else {
+                status = 1;
+                console.log("Cloud model updated ")
+            }
+
+        })
+
+    return status;
+
+
+}
 
 var CreateCloud = function(cloudData){
 
@@ -109,12 +134,15 @@ var AddLoadBalancer = function(loadBalancer){
                                     if(err){
                                         console.log("Cloud model update false ->", err)
                                     }else {
+                                        status= 1;
                                         console.log("Cloud model updated ")
                                     }
 
                                 })
 
                         }else{
+
+                            console.log("Error on loadbalancer save --> ", err);
 
                         }
                     }
