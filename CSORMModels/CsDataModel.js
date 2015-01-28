@@ -27,7 +27,7 @@ var SipExt = SequelizeConn.define('CSDB_SipExtension', {
 });
 
 
-var Cloud = Sequelize.define('CSDB_Cluster', {
+var Cloud = SequelizeConn.define('CSDB_Cluster', {
     RecordGuid: Sequelize.STRING,
     Name: Sequelize.STRING,
     ID: Sequelize.INTEGER,
@@ -37,7 +37,34 @@ var Cloud = Sequelize.define('CSDB_Cluster', {
     Class: Sequelize.STRING,
     Type: Sequelize.STRING,
     Category: Sequelize.STRING,
-    IsLoadBalanced: Sequelize.BOOLEAN
+    IsLoadBalanced: Sequelize.BOOLEAN,
+    LoadBalancerID: Sequelize.INTEGER
+});
+
+
+var Network = SequelizeConn.define('CSDB_Network', {
+    Type: Sequelize.string,
+    Owner: Sequelize.INTEGER,
+    Network: Sequelize.STRING,
+    Mask: Sequelize.INTEGER,
+    CloudID: Sequelize.INTEGER,
+    NetWorkID: Sequelize.INTEGER
+});
+
+
+var LoadBalancer = SequelizeConn.define('CSDB_Network', {
+    Type: Sequelize.string,
+    MainIP: Sequelize.STRING,
+    ID: Sequelize.INTEGER
+});
+
+var CloudEndUser = SequelizeConn.define('CSDB_CloudEndPoint', {
+
+    Company: Sequelize.INTEGER,
+    Tenent: Sequelize.INTEGER,
+    SIPConnectivityProvision: Sequelize.INTEGER,
+    CloudID: Sequelize.INTEGER,
+    NetWorkID: Sequelize.INTEGER
 });
 
 
@@ -60,5 +87,9 @@ var Context = SequelizeConn.define('CSDB_Context', {
 module.exports.SequelizeConn = SequelizeConn;
 module.exports.SipExt = SipExt;
 module.exports.Context = Context;
+module.exports.Cloud= Cloud;
+module.exports.Network= Network;
+module.exports.LoadBalancer= LoadBalancer;
+module.exports.CloudEndUser= CloudEndUser;
 
 
