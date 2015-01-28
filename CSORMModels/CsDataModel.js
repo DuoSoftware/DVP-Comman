@@ -28,9 +28,11 @@ var SipExt = SequelizeConn.define('CSDB_SipExtension', {
 
 
 var Cloud = SequelizeConn.define('CSDB_Cluster', {
-    RecordGuid: Sequelize.STRING,
+
     Name: Sequelize.STRING,
+    //ID: Sequelize.INTEGER,
     ID: Sequelize.INTEGER,
+    Code: Sequelize.INTEGER,
     Company: Sequelize.INTEGER,
     Tenent: Sequelize.INTEGER,
     Model: Sequelize.INTEGER,
@@ -52,8 +54,8 @@ var Network = SequelizeConn.define('CSDB_Network', {
 });
 
 
-var LoadBalancer = SequelizeConn.define('CSDB_Network', {
-    Type: Sequelize.string,
+var LoadBalancer = SequelizeConn.define('CSDB_LoadBalancer', {
+    Type: Sequelize.STRING,
     MainIP: Sequelize.STRING,
     ID: Sequelize.INTEGER
 });
