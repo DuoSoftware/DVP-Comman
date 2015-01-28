@@ -3,7 +3,7 @@ var Sequelize = require('sequelize');
 var SequelizeConn = new Sequelize('NodeTest', 'duo', 'DuoS123', {
     dialect: "postgres", // or 'sqlite', 'postgres', 'mariadb'
     port:    5432, // or 5432 (for postgres)
-    host:"192.168.2.98" //host address
+    host:"127.0.0.1" //host address
 });
 
 var SipExt = SequelizeConn.define('CSDB_SipExtension', {
