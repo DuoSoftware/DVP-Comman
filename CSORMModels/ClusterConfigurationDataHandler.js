@@ -95,7 +95,6 @@ var CreateCloud = function(cloudData){
     return status;
 };
 
-
 var AddLoadBalancer = function(loadBalancer){
 
     /*
@@ -158,3 +157,13 @@ var AddLoadBalancer = function(loadBalancer){
 
     return status;
 }
+
+var CreateDB = function(){
+
+    model.CreateDB();
+}
+
+
+module.exports.CreateCloud= CreateCloud;
+module.exports.ActivateCloud= ActivateCloud;
+module.exports.AddLoadBalancer= AddLoadBalancer;
