@@ -71,7 +71,6 @@ var CloudEndUser = SequelizeConn.define('CSDB_CloudEndPoint', {
 var Context = SequelizeConn.define('CSDB_Context', {
     Context: Sequelize.STRING,
     Description: Sequelize.STRING,
-    ContextCat: Sequelize.STRING,
     CompanyId: Sequelize.INTEGER,
     TenantId: Sequelize.INTEGER,
     ObjClass: Sequelize.STRING,
