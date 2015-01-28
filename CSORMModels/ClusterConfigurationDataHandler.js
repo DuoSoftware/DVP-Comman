@@ -5,25 +5,24 @@ var model = require('./CsDataModel.js');
 
 /*
 
-var CreateDatabase = function(){
+ var CreateDatabase = function(){
 
-    sequelize
-        .sync({ force: true })
-        .complete(function(err) {
-            if (!!err) {
-                console.log('An error occurred while creating the table:', err)
-            } else {
-                console.log('It worked!')
-            }
-        })
+ sequelize
+ .sync({ force: true })
+ .complete(function(err) {
+ if (!!err) {
+ console.log('An error occurred while creating the table:', err)
+ } else {
+ console.log('It worked!')
+ }
+ })
 
-};
+ };
 
-    */
+ */
 
 
 var CreateCloud = function(cloudData){
-
 
     //0 public
     //1 private
@@ -46,8 +45,8 @@ var CreateCloud = function(cloudData){
 
     var cloud = model.Cloud.build({
         Name: cloudData.Name,
-        Company: cloudData.Company,
-        Tenent: cloudData.Tenent,
+        CompanyId: cloudData.CompanyId,
+        TenantId: cloudData.TenantId,
         CloudModel: model,
         Class: cloudData.Class,
         Type: cloudData.Type,
@@ -92,7 +91,6 @@ var AddLoadBalancer = function(loadBalancer){
                         MainIP: loadBalancer.IP
                     }
                 )
-
                 loadBalancer
                     .save()
                     .complete(function(err) {
@@ -107,13 +105,20 @@ var AddLoadBalancer = function(loadBalancer){
                                     ID: loadBalancer.ID
                                 }
 
-                            )
+                            ).complete(function(err) {
+                                    if(err){
+                                        console.log("Cloud model update false ->", err)
+                                    }else {
+                                        console.log("Cloud model updated ")
+                                    }
+
+                                })
 
                         }else{
 
                         }
                     }
-                    )
+                )
             }
 
 

@@ -33,8 +33,8 @@ var Cloud = SequelizeConn.define('CSDB_Cluster', {
     //ID: Sequelize.INTEGER,
     ID: Sequelize.INTEGER,
     Code: Sequelize.INTEGER,
-    Company: Sequelize.INTEGER,
-    Tenent: Sequelize.INTEGER,
+    CompanyId: Sequelize.INTEGER,
+    TenantId: Sequelize.INTEGER,
     CloudModel: Sequelize.INTEGER,
     Class: Sequelize.STRING,
     Type: Sequelize.STRING,
@@ -62,8 +62,8 @@ var LoadBalancer = SequelizeConn.define('CSDB_LoadBalancer', {
 
 var CloudEndUser = SequelizeConn.define('CSDB_CloudEndPoint', {
 
-    Company: Sequelize.INTEGER,
-    Tenent: Sequelize.INTEGER,
+    CompanyId: Sequelize.INTEGER,
+    TenantId: Sequelize.INTEGER,
     SIPConnectivityProvision: Sequelize.INTEGER,
     CloudID: Sequelize.INTEGER,
     NetWorkID: Sequelize.INTEGER
