@@ -32,10 +32,10 @@ var CreateCloud = function(cloudData){
     var model = 0;
     var status = 0;
 
-    if(0<cloudData.Model && cloudData.Model<4) {
+    if(0<cloudData.CloudModel && cloudData.CloudModel<4) {
 
         console.log("Model is correct ");
-        model = cloudData.Model;
+        model = cloudData.CloudModel;
 
     }
     else{
@@ -48,7 +48,7 @@ var CreateCloud = function(cloudData){
         Name: cloudData.Name,
         Company: cloudData.Company,
         Tenent: cloudData.Tenent,
-        Model: model,
+        CloudModel: model,
         Class: cloudData.Class,
         Type: cloudData.Type,
         Category: cloudData.Category,

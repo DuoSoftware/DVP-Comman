@@ -35,7 +35,7 @@ var Cloud = SequelizeConn.define('CSDB_Cluster', {
     Code: Sequelize.INTEGER,
     Company: Sequelize.INTEGER,
     Tenent: Sequelize.INTEGER,
-    Model: Sequelize.INTEGER,
+    CloudModel: Sequelize.INTEGER,
     Class: Sequelize.STRING,
     Type: Sequelize.STRING,
     Category: Sequelize.STRING,
