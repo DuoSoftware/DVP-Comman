@@ -167,3 +167,4 @@ var CreateDB = function(){
 module.exports.CreateCloud= CreateCloud;
 module.exports.ActivateCloud= ActivateCloud;
 module.exports.AddLoadBalancer= AddLoadBalancer;
+module.exports.CreateDB= CreateDB;
