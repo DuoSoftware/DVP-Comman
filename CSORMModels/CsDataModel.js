@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
-var SequelizeConn = new Sequelize('NodeTest', 'duo', 'DuoS123', {
-    dialect: "dvpdb", // or 'sqlite', 'postgres', 'mariadb'
+var SequelizeConn = new Sequelize('dvpdb', 'duo', 'DuoS123', {
+    dialect: "postgres", // or 'sqlite', 'postgres', 'mariadb'
     port:    5432, // or 5432 (for postgres)
     host:"127.0.0.1" //host address
 });
