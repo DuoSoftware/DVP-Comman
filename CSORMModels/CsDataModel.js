@@ -86,6 +86,21 @@ var Context = SequelizeConn.define('CSDB_Context', {
 });
 
 
+
+function CreateDB(){
+
+    SequelizeConn
+        .sync({ force: true })
+        .complete(function(err) {
+            if (!!err) {
+                console.log('An error occurred while creating the table:', err)
+            } else {
+                console.log('It worked!')
+            }
+        })
+}
+
+
 module.exports.SequelizeConn = SequelizeConn;
 module.exports.SipExt = SipExt;
 module.exports.Context = Context;
@@ -93,5 +108,9 @@ module.exports.Cloud= Cloud;
 module.exports.Network= Network;
 module.exports.LoadBalancer= LoadBalancer;
 module.exports.CloudEndUser= CloudEndUser;
+module.exports.CreateDB= CreateDB;
+
+
+
 
 
