@@ -2,8 +2,13 @@ var stringify = require('stringify');
 
 var FormatMessage = function(exception, customMessage, isSuccess, resultObj)
 {
+    var Exception = {
+        Message : exception.message,
+        StackTrace : exception.stack
+    };
+
     var result = {
-        Exception : exception,
+        Exception : Exception,
         CustomMessage : customMessage,
         IsSuccess : isSuccess,
         Result : resultObj
