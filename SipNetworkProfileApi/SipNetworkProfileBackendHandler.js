@@ -1,4 +1,5 @@
 var dbModel = require('./DVP-DBModels');
+var sequelize = dbModel.SequelizeConn;
 
 var deleteNetworkProfile = function(profileId, callback)
 {
@@ -33,11 +34,11 @@ var deleteNetworkProfile = function(profileId, callback)
     }
 }
 
+
 var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
 {
     try
     {
-
         dbModel.CallServer.find({where: [{id: callServerId}]}).complete(function (err, csRec)
         {
             if (!err && csRec)
