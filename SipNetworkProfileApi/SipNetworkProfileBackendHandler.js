@@ -79,6 +79,52 @@ var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
     }
 }
 
+
+var addNetworkProfiletoEndUser = function(profileid, enduserid, callback){
+
+    try
+    {
+        dbModel.SipNetworkProfile.find({where: [{id: profileid}]}).complete(function (err, nw)
+        {
+            if (!err && nw)
+            {
+                dbModel.CloudEndUser.find({where: [{id: enduserid}]}).complete(function (err, user)
+                {
+                    if (!err && user)
+                    {
+                        nw.addCloudEndUser(user).complete(function (err, result)
+                        {
+                            if(!err)
+                            {
+                                callback(undefined, true);
+                            }
+                            else
+                            {
+                                callback(err, true);
+                            }
+
+                        })
+                    }
+                    else
+                    {
+                        callback(undefined, false);
+                    }
+
+                })
+
+            }
+            else
+            {
+                callback(undefined, false);
+            }})
+    }
+    catch(ex)
+    {
+        callback(ex, false);
+    }
+
+}
+
 var addSipNetworkProfile = function(profileInfo, callback)
 {
     try {
@@ -126,3 +172,4 @@ var addSipNetworkProfile = function(profileInfo, callback)
 module.exports.deleteNetworkProfile = deleteNetworkProfile;
 module.exports.addNetworkProfileToCallServer = addNetworkProfileToCallServer;
 module.exports.addSipNetworkProfile = addSipNetworkProfile;
+module.exports.addNetworkProfiletoEndUser= addNetworkProfiletoEndUser;
