@@ -1,4 +1,4 @@
-//var seq = require('./CSDataModel.js').sequelize;
+
 var model = require('./CSDataModel.js');
 
 //var sleep = require('sleep');
