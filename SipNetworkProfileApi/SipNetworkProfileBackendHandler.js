@@ -90,9 +90,9 @@ var addNetworkProfiletoEndUser = function(profileid, enduserid, callback){
             {
                 dbModel.CloudEndUser.find({where: [{id: enduserid}]}).complete(function (err, user)
                 {
-                    if (!err && user)
+                    if (!err && user )
                     {
-                        nw.addCloudEndUser(user).complete(function (err, result)
+                        user.setSipNetworkProfile(nw).complete(function (err, result)
                         {
                             if(!err)
                             {
