@@ -51,18 +51,18 @@ var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
                         {
                             if(!err)
                             {
-                                callback(undefined, true);
+                                callback(undefined,nw, true);
                             }
                             else
                             {
-                                callback(err, true);
+                                callback(err,undefined, true);
                             }
 
                         })
                     }
                     else
                     {
-                        callback(undefined, false);
+                        callback(undefined,undefined, false);
                     }
 
                 })
@@ -70,12 +70,12 @@ var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
             }
             else
             {
-                callback(undefined, false);
+                callback(undefined,undefined, false);
             }})
     }
     catch(ex)
     {
-        callback(ex, false);
+        callback(ex,undefined, false);
     }
 }
 
