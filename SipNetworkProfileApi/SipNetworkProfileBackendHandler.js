@@ -144,23 +144,46 @@ var addSipNetworkProfile = function(profileInfo, callback)
             TenantId: profileInfo.TenantId
         });
 
-        profile
-            .save()
-            .complete(function (err) {
-                try {
-                    if (!!err) {
-                        callback(err, -1, false);
-                    }
-                    else {
-                        var profId = profile.id;
-                        callback(undefined, profId, true);
-                    }
-                }
-                catch (ex) {
-                    callback(ex,-1, false);
-                }
 
-            })
+
+        dbModel.IPAddress.find({where: [{IP: profileInfo.InternalIp}]}).complete(function (err, ipAddress) {
+
+            if(ipAddress && ipAddress.IsAllocated){
+
+                profile
+                    .save()
+                    .complete(function (err) {
+                        try {
+                            if (!!err) {
+                                callback(err, -1, false);
+                            }
+                            else {
+
+                                var profId = profile.id;
+                                callback(undefined, profId, true);
+                            }
+                        }
+                        catch (ex) {
+                            callback(ex,-1, false);
+                        }
+
+                    })
+
+
+
+            }else{
+
+                callback(new Error("IP not found"), -1, false);
+
+            }
+
+
+
+
+
+
+        });
+
 
     }
     catch(ex)
