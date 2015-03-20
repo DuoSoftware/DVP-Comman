@@ -96,18 +96,18 @@ var addNetworkProfiletoEndUser = function(profileid, enduserid, callback){
                         {
                             if(!err)
                             {
-                                callback(undefined, true);
+                                callback(undefined, undefined,true);
                             }
                             else
                             {
-                                callback(err, true);
+                                callback(err, nw,true);
                             }
 
                         })
                     }
                     else
                     {
-                        callback(undefined, false);
+                        callback(undefined, undefined,false);
                     }
 
                 })
@@ -115,12 +115,12 @@ var addNetworkProfiletoEndUser = function(profileid, enduserid, callback){
             }
             else
             {
-                callback(undefined, false);
+                callback(undefined,undefined, false);
             }})
     }
     catch(ex)
     {
-        callback(ex, false);
+        callback(ex,undefined, false);
     }
 
 }
