@@ -1,4 +1,4 @@
-var dbModel = require('./DVP-DBModels');
+var dbModel = require('../../DVP-DBModels');
 var sequelize = dbModel.SequelizeConn;
 
 var deleteNetworkProfile = function(profileId, callback)
@@ -177,13 +177,7 @@ var addSipNetworkProfile = function(profileInfo, callback)
 
             }
 
-
-
-
-
-
         });
-
 
     }
     catch(ex)
