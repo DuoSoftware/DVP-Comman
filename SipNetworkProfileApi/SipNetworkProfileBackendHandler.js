@@ -92,7 +92,7 @@ var addNetworkProfiletoEndUser = function(profileid, enduserid, callback){
                 {
                     if (!err && user )
                     {
-                        user.setSipNetworkProfile(nw).complete(function (err, result)
+                        user.setSipNetworkProfiles(nw).complete(function (err, result)
                         {
                             if(!err)
                             {
