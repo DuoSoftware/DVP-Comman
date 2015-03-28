@@ -47,11 +47,11 @@ var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
                 {
                     if (!err && profRec)
                     {
-                        csRec.addSipNetworkProfile(profRec).complete(function (err, result)
+                        csRec.addCSDB_SipNetworkProfile(profRec).complete(function (err, result)
                         {
                             if(!err)
                             {
-                                callback(undefined,nw, true);
+                                callback(undefined,profRec, true);
                             }
                             else
                             {
