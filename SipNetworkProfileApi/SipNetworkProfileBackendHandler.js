@@ -47,7 +47,7 @@ var addNetworkProfileToCallServer = function(profileId, callServerId, callback)
                 {
                     if (!err && profRec)
                     {
-                        csRec.addCSDB_SipNetworkProfile(profRec).complete(function (err, result)
+                        csRec.addSipNetworkProfile(profRec).complete(function (err, result)
                         {
                             if(!err)
                             {
