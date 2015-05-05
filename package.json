@@ -3,6 +3,12 @@
   "version": "0.0.0",
   "description": "Common data models and scripts for DVP",
   "main": "index.js",
+  "dependencies": {
+    "winston-logstash-udp": "^0.0.5",
+    "winston": "^1.0.0",
+    "winston-logstash": "^0.2.11"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
