@@ -26,8 +26,8 @@ module.exports.WriteLog = WriteLog;
 
      logger.add(winston.transports.Console, {colorize: true});
 
-     if(process.env.LOG_SERVER.LOG_PATH) {
-         logger.add(winston.transports.File, {filename: process.env.LOG_SERVER.LOG_PATH + '/logger.log'});
+     if(process.env.LOG_PATH) {
+         logger.add(winston.transports.File, {filename: process.env.LOG_PATH + '/logger.log'});
      }else{
          logger.add(winston.transports.File, {filename: 'logger.log'});
 
