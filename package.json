@@ -6,7 +6,8 @@
   "dependencies": {
     "winston-logstash-udp": "^0.0.5",
     "winston": "^1.0.0",
-    "winston-logstash": "^0.2.11"
+    "winston-logstash": "^0.2.11",
+    "winstonRollingTransport" : "git://github.com/mallocator/Winston-Rolling-File-Appender.git#master"
   },
   "devDependencies": {},
   "scripts": {
