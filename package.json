@@ -1,5 +1,5 @@
 {
-  "name": "DVP-Common",
+  "name": "dvp-common",
   "version": "0.0.1",
   "description": "Common data models and scripts for DVP",
   "main": "index.js",
