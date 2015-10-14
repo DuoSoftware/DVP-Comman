@@ -1,13 +1,12 @@
 {
-  "name": "DVP-Common",
-  "version": "0.0.0",
+  "name": "dvp-common",
+  "version": "0.0.2",
   "description": "Common data models and scripts for DVP",
   "main": "index.js",
   "dependencies": {
     "winston-logstash-udp": "^0.0.5",
     "winston": "^1.0.0",
-    "winston-logstash": "^0.2.11",
-    "winstonRollingTransport" : "git://github.com/mallocator/Winston-Rolling-File-Appender.git#master"
+    "winston-logstash": "^0.2.11"
   },
   "devDependencies": {},
   "scripts": {
