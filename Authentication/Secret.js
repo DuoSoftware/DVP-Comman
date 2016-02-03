@@ -12,7 +12,7 @@ redisClient.on('error', function (err) {
     console.log('Error ' + err);
 });
 
-var Authenticate = function(req, payload, done){
+var Secret = function(req, payload, done){
 
 
     if(payload && payload.iss && payload.jti) {
@@ -45,4 +45,4 @@ var Authenticate = function(req, payload, done){
 
 
 
-module.exports.Authenticate = Authenticate;
+module.exports.Secret = Secret;
