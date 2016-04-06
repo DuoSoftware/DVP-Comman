@@ -3,13 +3,27 @@ var config = require('config');
 var resource = config.Host.resource;
 
 
-var redisip = config.Redis.ip;
-var redisport = config.Redis.port;
+var redisip = config.Security.ip;
+var redisport = config.Security.port;
+var redisuser = config.Security.user;
+var redispass = config.Security.password;
+
+
+//[redis:]//[user][:password@][host][:port][/db-number][?db=db-number[&password=bar[&option=value]]]
+//redis://user:secret@localhost:6379
+
 
 var redisClient = redis.createClient(redisport, redisip);
 
 redisClient.on('error', function (err) {
     console.log('Error ' + err);
+});
+
+redisClient.auth(redispass, function (error) {
+
+    if(error != nil) {
+        console.log("Error Redis : " + error);
+    }
 });
 
 var Secret = function(req, payload, done){

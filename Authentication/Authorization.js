@@ -25,9 +25,21 @@ module.exports = function(options) {
         if(req.user.scope ) {
 
 
+            /*
             var index = req.user.scope.indexOf("all");
-
             if(index > 0){
+                next();
+            }*/
+
+            var globalselector = req.user.scope.filter(function (item) {
+
+                return item.resource == "all";
+
+            });
+
+
+
+            if(globalselector && globalselector.length > 0){
 
                 next();
 
