@@ -21,7 +21,7 @@ redisClient.on('error', function (err) {
 
 redisClient.auth(redispass, function (error) {
 
-    if(error != nil) {
+    if(error != null) {
         console.log("Error Redis : " + error);
     }
 });
