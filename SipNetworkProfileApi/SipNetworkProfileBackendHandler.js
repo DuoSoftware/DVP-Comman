@@ -1,4 +1,4 @@
-var dbModel = require('../../DVP-DBModels');
+var dbModel = require('dvp-dbmodels');
 var sequelize = dbModel.SequelizeConn;
 
 var deleteNetworkProfile = function(profileId, callback)

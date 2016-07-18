@@ -1,13 +1,13 @@
 {
   "name": "dvp-common",
-  "version": "0.0.2",
+  "version": "0.1.2",
   "description": "Common data models and scripts for DVP",
-  "main": "index.js",
+  "main": "test.js",
   "dependencies": {
-    "moment": "^2.14.1",
-    "winston": "^1.0.0",
-    "winston-logstash": "^0.2.11",
-    "winston-logstash-udp": "^0.0.5"
+    "config": "^1.19.0",
+    "redis": "^2.4.2",
+    "winston": "^2.1.1",
+    "winston-logstash-udp": "^0.1.1"
   },
   "devDependencies": {},
   "scripts": {
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DuoSoftware/DVP-Common.git"
+    "url": "git+https://github.com/DuoSoftware/DVP-Common.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DuoSoftware/DVP-Common/issues"
   },
-  "homepage": "https://github.com/DuoSoftware/DVP-Common"
+  "homepage": "https://github.com/DuoSoftware/DVP-Common#readme"
 }
