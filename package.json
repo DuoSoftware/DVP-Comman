@@ -4,9 +4,10 @@
   "description": "Common data models and scripts for DVP",
   "main": "index.js",
   "dependencies": {
-    "winston-logstash-udp": "^0.0.5",
+    "moment": "^2.14.1",
     "winston": "^1.0.0",
-    "winston-logstash": "^0.2.11"
+    "winston-logstash": "^0.2.11",
+    "winston-logstash-udp": "^0.0.5"
   },
   "devDependencies": {},
   "scripts": {
