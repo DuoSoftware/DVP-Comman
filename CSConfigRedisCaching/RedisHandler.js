@@ -623,7 +623,7 @@ var addGroupToCache = function(groupObj, companyId, tenantId)
         {
             var keyGroupById = 'USERGROUP:' + tenantId + ':' + companyId + ':' + groupObj.id;
 
-            dbmodel.UserGroup.find({where: [{id: resExt.UserGroup.id, CompanyId: companyId, TenantId: tenantId}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
+            dbmodel.UserGroup.find({where: [{id: groupObj.id, CompanyId: companyId, TenantId: tenantId}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                 .then(function (resGrp)
                 {
                     client.set(keyGroupById, JSON.strigify(resGrp), function(err, response)
@@ -652,45 +652,6 @@ var addGroupToCache = function(groupObj, companyId, tenantId)
                 {
 
                 });
-
-
-            var keySipUserById = 'SIPUSERBYID:' + tenantId + ':' + companyId + ':' + sipUserObj.id;
-
-            dbmodel.SipUACEndpoint.find({where: [{id: sipUserObj.id, TenantId: tenantId, CompanyId: companyId}], include: [{model: dbmodel.Extension, as:'Extension'}]})
-                .then(function (resUser)
-                {
-                    client.set(keySipUserById, JSON.strigify(resUser), function(err, response)
-                    {
-
-                    });
-
-                    if(resUser.SipUsername)
-                    {
-                        var keySipUserByName = 'SIPUSER:' + resUser.SipUsername;
-                        client.set(keySipUserByName, JSON.strigify(resUser), function(err, response)
-                        {
-
-                        });
-                    }
-
-                    if(resUser.Extension && resUser.Extension.id)
-                    {
-                        dbmodel.Extension.find({where: [{id: resUser.Extension.id},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
-                            .then(function (resExt)
-                            {
-                                var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
-
-                                client.set(keyExt, JSON.strigify(resExt), function(err, response)
-                                {
-
-                                });
-
-                            });
-                    }
-                }).catch(function(err)
-                {
-
-                });
         }
 
 
@@ -702,6 +663,183 @@ var addGroupToCache = function(groupObj, companyId, tenantId)
 
 };
 
+var removeGroupFromCache = function(groupId, companyId, tenantId)
+{
+
+    try
+    {
+        if(groupId)
+        {
+            var keyGroupById = 'USERGROUP:' + tenantId + ':' + companyId + ':' + groupId;
+
+            client.get(keyGroupById, function(err, grpCacheStr)
+            {
+                var grpCache = null;
+
+                grpCache = JSON.parse(grpCacheStr);
+
+                client.del(keyGroupById, function(err, response)
+                {
+
+                });
+
+                if(grpCache && grpCache.Extension && grpCache.Extension.Extension)
+                {
+                    var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + grpCache.Extension.Extension;
+                    client.get(keyExt, function(err, extCacheStr)
+                    {
+                        var extCache = null;
+
+                        extCache = JSON.parse(extCacheStr);
+
+                        if(extCache)
+                        {
+                            extCache.UserGroup = null;
+                        }
+
+                        client.set(keyExt, JSON.strigify(extCache), function(err, response)
+                        {
+
+                        });
+                    });
+                }
+
+            });
+
+        }
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeExtensionFromCache = function(extension, companyId, tenantId)
+{
+
+    try
+    {
+        if(extension)
+        {
+            var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + extension;
+
+            client.get(keyExt, function(err, extCacheStr)
+            {
+                var extCache = null;
+
+                extCache = JSON.parse(extCacheStr);
+
+                client.del(keyExt, function(err, response)
+                {
+
+                });
+
+                if(extCache && extCache.id)
+                {
+                    var keyExtById = 'EXTENSIONBYID:' + tenantId + ':' + companyId + ':' + extCache.id;
+
+                    client.del(keyExtById, function(err, response)
+                    {
+
+                    });
+
+                    if(extCache.ObjCategory === 'USER' && extCache.SipUACEndpoint)
+                    {
+                        if(extCache.SipUACEndpoint.id)
+                        {
+                            var keySipUserById = 'SIPUSERBYID:' + tenantId + ':' + companyId + ':' + extCache.SipUACEndpoint.id;
+
+                            client.get(keySipUserById, function(err, usrCacheByIdStr)
+                            {
+                                var usrCacheById = null;
+
+                                usrCacheById = JSON.parse(usrCacheByIdStr);
+
+                                if(usrCacheById)
+                                {
+                                    usrCacheById.Extension = null;
+
+                                    client.set(keySipUserById, JSON.strigify(usrCacheById), function(err, response)
+                                    {
+
+                                    });
+                                }
+
+
+                            });
+                        }
+
+                        if(extCache.SipUACEndpoint.SipUsername)
+                        {
+                            var keySipUser = 'SIPUSER:' + extCache.SipUACEndpoint.SipUsername;
+
+                            client.get(keySipUser, function(err, usrCacheStr)
+                            {
+                                var usrCache = null;
+
+                                usrCache = JSON.parse(usrCacheStr);
+
+                                if(usrCache)
+                                {
+                                    usrCache.Extension = null;
+
+                                    client.set(keySipUser, JSON.strigify(usrCache), function(err, response)
+                                    {
+
+                                    });
+                                }
+
+
+                            });
+                        }
+
+
+
+                    }
+                    else if(extCache.ObjCategory === 'GROUP' && extCache.UserGroup && extCache.UserGroup.id)
+                    {
+                        var keyGroupById = 'USERGROUP:' + tenantId + ':' + companyId + ':' + extCache.UserGroup.id;
+
+                        client.get(keyGroupById, function(err, grpCacheByIdStr)
+                        {
+                            var grpCacheById = null;
+
+                            grpCacheById = JSON.parse(grpCacheByIdStr);
+
+                            if(grpCacheById)
+                            {
+                                grpCacheById.Extension = null;
+
+                                client.set(keyGroupById, JSON.strigify(grpCacheById), function(err, response)
+                                {
+
+                                });
+                            }
+
+
+                        });
+
+
+                    }
+
+
+                }
+
+            });
+
+        }
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
 
 var addConferenceToCache = function(conferenceObj, companyId, tenantId)
 {
@@ -773,3 +911,5 @@ module.exports.addExtensionToCache = addExtensionToCache;
 module.exports.addSipUserToCache = addSipUserToCache;
 module.exports.addGroupToCache = addGroupToCache;
 module.exports.addConferenceToCache = addConferenceToCache;
+module.exports.removeGroupFromCache = removeGroupFromCache;
+module.exports.removeExtensionFromCache = removeExtensionFromCache;
