@@ -171,6 +171,538 @@ var addSipProfileToCompanyObj = function(profileObj, tenantId, companyId)
     });
 };
 
+var addCloudEndUserToCompanyObj = function(euObj, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(!compObj.CloudEndUser)
+            {
+                compObj.CloudEndUser = {};
+            }
+
+            compObj.CloudEndUser[euObj.id] = euObj;
+
+            client.set(key, JSON.stringify(compObj), function(err, compObj)
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+
+            });
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var removeCloudEndUserFromCompanyObj = function(euId, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(compObj.CloudEndUser && compObj.CloudEndUser[euId])
+            {
+                delete compObj.CloudEndUser[euId];
+                client.set(key, JSON.stringify(compObj), function(err, compObj)
+                {
+                    lock.unlock()
+                        .catch(function(err) {
+                            logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+
+                });
+            }
+            else
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+            }
+
+
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+
+var addCallRuleToCompanyObj = function(ruleObj, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(!compObj.CallRule)
+            {
+                compObj.CallRule = {};
+            }
+
+            compObj.CallRule[ruleObj.id] = ruleObj;
+
+            client.set(key, JSON.stringify(compObj), function(err, compObj)
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.addCallRuleToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+
+            });
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.addCallRuleToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var removeCallRuleFromCompanyObj = function(ruleId, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(compObj.CallRule && compObj.CallRule[ruleId])
+            {
+                delete compObj.CallRule[ruleId];
+                client.set(key, JSON.stringify(compObj), function(err, compObj)
+                {
+                    lock.unlock()
+                        .catch(function(err) {
+                            logger.error('[DVP-ClusterConfiguration.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+
+                });
+            }
+            else
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+            }
+
+
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var addApplicationToCompanyObj = function(appObj, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(!compObj.Application)
+            {
+                compObj.Application = {};
+            }
+
+            compObj.Application[appObj.id] = appObj;
+
+            client.set(key, JSON.stringify(compObj), function(err, compObj)
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.addApplicationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+
+            });
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.addApplicationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var removeApplicationFromCompanyObj = function(appId, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(compObj.Application && compObj.Application[appId])
+            {
+                delete compObj.Application[appId];
+                client.set(key, JSON.stringify(compObj), function(err, compObj)
+                {
+                    lock.unlock()
+                        .catch(function(err) {
+                            logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+
+                });
+            }
+            else
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+            }
+
+
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var addTranslationToCompanyObj = function(transObj, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(!compObj.Translation)
+            {
+                compObj.Translation = {};
+            }
+
+            compObj.Translation[transObj.id] = transObj;
+
+            client.set(key, JSON.stringify(compObj), function(err, compObj)
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.addTranslationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+
+            });
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.addTranslationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var removeTranslationFromCompanyObj = function(transId, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(compObj.Translation && compObj.Translation[transId])
+            {
+                delete compObj.Translation[transId];
+                client.set(key, JSON.stringify(compObj), function(err, compObj)
+                {
+                    lock.unlock()
+                        .catch(function(err) {
+                            logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+
+                });
+            }
+            else
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+            }
+
+
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+
+var addTransferCodeToCompanyObj = function(tcObj, tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(!compObj.TransferCode)
+            {
+                compObj.TransferCode = {};
+            }
+
+            compObj.TransferCode = tcObj;
+
+            client.set(key, JSON.stringify(compObj), function(err, compObjResp)
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+
+            });
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
+var removeTransferCodeFromCompanyObj = function(tenantId, companyId)
+{
+    var ttl = 2000;
+
+    var lockKey = 'DVPCACHELOCK:' + tenantId + ':' + companyId;
+
+    var key = 'DVPCACHE:' + tenantId + ':' + companyId;
+
+    redlock.lock(lockKey, ttl).then(function(lock)
+    {
+        client.get(key, function(err, compStr)
+        {
+            var compObj = {};
+            if(compStr)
+            {
+                try
+                {
+                    compObj = JSON.parse(compStr);
+                }
+                catch(ex)
+                {
+                    compObj = {};
+
+                }
+
+            }
+
+            if(compObj.TransferCode)
+            {
+                delete compObj.TransferCode;
+                client.set(key, JSON.stringify(compObj), function(err, compObjResp)
+                {
+                    lock.unlock()
+                        .catch(function(err) {
+                            logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+
+                });
+            }
+            else
+            {
+                lock.unlock()
+                    .catch(function(err) {
+                        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                    });
+            }
+
+
+        });
+
+    }).catch(function(err)
+    {
+        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+    });
+};
+
 var removeSipProfileFromCompanyObj = function(profileId, tenantId, companyId)
 {
     var ttl = 2000;
@@ -341,6 +873,139 @@ var addTrunkNumberToCache = function(trNumber, trunkNumObj)
         var key = 'TRUNKNUMBER:' + trNumber;
 
         client.set(key, JSON.strigify(trunkNumObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addDidNumberToCache = function(didNumber, companyId, tenantId, didNumObj)
+{
+    try
+    {
+        var key = 'DIDNUMBER:' + tenantId + ':' + companyId + ':' + didNumber;
+
+        client.set(key, JSON.strigify(didNumObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeDidNumberFromCache = function(didNumber, companyId, tenantId)
+{
+    try
+    {
+        var key = 'DIDNUMBER:' + tenantId + ':' + companyId + ':' + didNumber;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removePBXUserFromCache = function(pabxUserUuid, companyId, tenantId)
+{
+    try
+    {
+        var key = 'PBXUSER:' + tenantId + ':' + companyId + ':' + pabxUserUuid;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addLimitToCache = function(limitId, companyId, tenantId, limObj)
+{
+    try
+    {
+        var key = 'LIMIT:' + tenantId + ':' + companyId + ':' + limitId;
+
+        client.set(key, JSON.strigify(limObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeLimitFromCache = function(limitId, companyId, tenantId)
+{
+    try
+    {
+        var key = 'LIMIT:' + tenantId + ':' + companyId + ':' + limitId;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addNumberBLToCache = function(blNumber, companyId, tenantId, blObj)
+{
+    try
+    {
+        var key = 'NUMBERBLACKLIST:' + tenantId + ':' + companyId + ':' + blNumber;
+
+        client.set(key, JSON.strigify(blObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeNumberBLFromCache = function(blNumber, companyId, tenantId)
+{
+    try
+    {
+        var key = 'NUMBERBLACKLIST:' + tenantId + ':' + companyId + ':' + blNumber;
+
+        client.del(key, function(err, response)
         {
 
         });
@@ -895,6 +1560,172 @@ var addConferenceToCache = function(conferenceObj, companyId, tenantId)
 };
 
 
+var addPABXUserToCache = function(pabxUserUuid, companyId, tenantId)
+{
+    try
+    {
+        if(pabxUserUuid)
+        {
+            var keyPbxUser = 'PBXUSER:' + tenantId + ':' + companyId + ':' + pabxUserUuid;
+
+            dbModel.PBXUser.find({where :[{CompanyId: companyId},{TenantId: tenantId},{UserUuid: pabxUserUuid}], include : [{model: dbModel.PBXUserTemplate, as: "PBXUserTemplateActive"}, {model: dbModel.FollowMe, as: "FollowMe", include: [{model: dbModel.PBXUser, as: "DestinationUser"}]}, {model: dbModel.Forwarding, as: "Forwarding"}]})
+                .then(function (usrObj)
+                {
+                    if(usrObj)
+                    {
+                        client.set(keyPbxUser, JSON.strigify(usrObj), function(err, response)
+                        {
+
+                        });
+                    }
+
+
+                }).catch(function(err)
+                {
+
+                });
+        }
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addFeatureCodeToCache = function(fcObj, companyId, tenantId)
+{
+    try
+    {
+        var key = 'FEATURECODE:' + tenantId + ':' + companyId;
+
+        client.set(key, JSON.strigify(fcObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeFeatureCodeFromCache = function(companyId, tenantId)
+{
+    try
+    {
+        var key = 'FEATURECODE:' + tenantId + ':' + companyId;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addPBXCompDataToCache = function(compObj, companyId, tenantId)
+{
+    try
+    {
+        var key = 'PBXCOMPANYINFO:' + tenantId + ':' + companyId;
+
+        client.set(key, JSON.strigify(compObj), function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removePBXCompDataFromCache = function(companyId, tenantId)
+{
+    try
+    {
+        var key = 'PBXCOMPANYINFO:' + tenantId + ':' + companyId;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeScheduleFromCache = function(scheduleId, companyId, tenantId)
+{
+    try
+    {
+        var key = 'SCHEDULE:' + tenantId + ':' + companyId + ':' + scheduleId;
+
+        client.del(key, function(err, response)
+        {
+
+        });
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var addScheduleToCache = function(scheduleId, companyId, tenantId)
+{
+    try
+    {
+        if(scheduleId)
+        {
+            var keyPbxUser = 'SCHEDULE:' + tenantId + ':' + companyId + ':' + scheduleId;
+
+            dbModel.Schedule.find({where :[{CompanyId: companyId},{TenantId: tenantId},{id: scheduleId}], include : [{model: dbModel.Appointment, as: "Appointment"}]})
+                .then(function (schedule)
+                {
+                    if(schedule)
+                    {
+                        client.set(keyPbxUser, JSON.strigify(schedule), function(err, response)
+                        {
+
+                        });
+                    }
+
+
+                }).catch(function(err)
+                {
+
+                });
+        }
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+
 module.exports.addContextToCache = addContextToCache;
 module.exports.removeContextFromCache = removeContextFromCache;
 module.exports.addCallServerToCompanyObj = addCallServerToCompanyObj;
@@ -913,3 +1744,28 @@ module.exports.addGroupToCache = addGroupToCache;
 module.exports.addConferenceToCache = addConferenceToCache;
 module.exports.removeGroupFromCache = removeGroupFromCache;
 module.exports.removeExtensionFromCache = removeExtensionFromCache;
+module.exports.addCloudEndUserToCompanyObj = addCloudEndUserToCompanyObj;
+module.exports.removeCloudEndUserFromCompanyObj = removeCloudEndUserFromCompanyObj;
+module.exports.addDidNumberToCache = addDidNumberToCache;
+module.exports.removeDidNumberFromCache = removeDidNumberFromCache;
+module.exports.addTransferCodeToCompanyObj = addTransferCodeToCompanyObj;
+module.exports.removeTransferCodeFromCompanyObj = removeTransferCodeFromCompanyObj;
+module.exports.addNumberBLToCache = addNumberBLToCache;
+module.exports.removeNumberBLFromCache = removeNumberBLFromCache;
+module.exports.addCallRuleToCompanyObj = addCallRuleToCompanyObj;
+module.exports.removeCallRuleFromCompanyObj = removeCallRuleFromCompanyObj;
+module.exports.addApplicationToCompanyObj = addApplicationToCompanyObj;
+module.exports.removeApplicationFromCompanyObj = removeApplicationFromCompanyObj;
+module.exports.addTranslationToCompanyObj = addTranslationToCompanyObj;
+module.exports.removeTranslationFromCompanyObj = removeTranslationFromCompanyObj;
+module.exports.addLimitToCache = addLimitToCache;
+module.exports.removeLimitFromCache = removeLimitFromCache;
+module.exports.removePBXUserFromCache = removePBXUserFromCache;
+module.exports.addPABXUserToCache = addPABXUserToCache;
+module.exports.addFeatureCodeToCache = addFeatureCodeToCache;
+module.exports.removeFeatureCodeFromCache = removeFeatureCodeFromCache;
+module.exports.addPBXCompDataToCache = addPBXCompDataToCache;
+module.exports.removePBXCompDataFromCache = removePBXCompDataFromCache;
+module.exports.removeScheduleFromCache = removeScheduleFromCache;
+module.exports.addScheduleToCache = addScheduleToCache;
+

@@ -83,6 +83,6 @@ var CheckScheduleValidity = function(schedule)
         return pickedAppointment;
     }
 
-}
+};
 
 module.exports.CheckScheduleValidity = CheckScheduleValidity;
