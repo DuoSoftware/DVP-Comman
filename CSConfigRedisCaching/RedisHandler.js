@@ -13,6 +13,8 @@ var password = Config.Redis.password;
 
 var client = redis.createClient(redisPort, redisIp);
 
+client.select(10, function() { /* ... */ });
+
 client.auth(password, function (error) {
     console.log("Redis Auth Error : "+error);
 });
