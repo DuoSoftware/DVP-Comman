@@ -10,6 +10,7 @@ var dbmodel = require('dvp-dbmodels');
 var redisIp = Config.Redis.ip;
 var redisPort = Config.Redis.port;
 var password = Config.Redis.password;
+var db = Config.Redis.db;
 
 var client = redis.createClient(redisPort, redisIp);
 
@@ -17,7 +18,7 @@ client.auth(password, function (error) {
     console.log("Redis Auth Error : "+error);
 });
 
-client.select(9, function() { /* ... */ });
+client.select(db, function() {});
 
 client.on("error", function (err) {
     console.log("Error " + err);
@@ -38,6 +39,505 @@ redlock.on('clientError', function(err)
     logger.error('[DVP-Common.AcquireLock] - [%s] - REDIS LOCK FAILED', err);
 
 });
+
+var addDataToCache = function(companyId, tenantId)
+{
+    //--------------- ADD CLOUDS ----------------//
+    dbmodel.Cloud.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (cloudList)
+        {
+            if(cloudList)
+            {
+                cloudList.forEach(function(cloud)
+                {
+                    addClusterToCache(cloud.id);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+    //--------------- ADD TRUNKS ----------------//
+
+    dbmodel.Trunk.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (trunkList)
+        {
+            if(trunkList)
+            {
+                trunkList.forEach(function(trunk)
+                {
+                    addTrunkToCache(trunk.id);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD TRUNKS ----------------//
+
+    dbmodel.Trunk.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (trunkList)
+        {
+            if(trunkList)
+            {
+                trunkList.forEach(function(trunk)
+                {
+                    addTrunkToCache(trunk.id);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD TRUNKS ----------------//
+
+    dbmodel.Trunk.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (trunkList)
+        {
+            if(trunkList)
+            {
+                trunkList.forEach(function(trunk)
+                {
+                    addTrunkToCache(trunk.id);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD SIP PROFILES ----------------//
+
+    dbmodel.SipNetworkProfile.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (profList)
+        {
+            if(profList)
+            {
+                profList.forEach(function(profile)
+                {
+                    addSipProfileToCompanyObj(profile, tenantId, companyId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD CLOUD END USERS ----------------//
+
+    dbmodel.CloudEndUser.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (euList)
+        {
+            if(euList)
+            {
+                euList.forEach(function(eu)
+                {
+                    addCloudEndUserToCompanyObj(eu, tenantId, companyId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD CALL RULES ----------------//
+
+    dbmodel.CallRule.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (crList)
+        {
+            if(crList)
+            {
+                crList.forEach(function(cr)
+                {
+                    addCallRuleToCompanyObj(cr, tenantId, companyId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD APPLICATIONS ----------------//
+
+    dbmodel.Application.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (appList)
+        {
+            if(appList)
+            {
+                appList.forEach(function(app)
+                {
+                    addApplicationToCompanyObj(app, tenantId, companyId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD TRANSLATIONS ----------------//
+
+    dbmodel.Translation.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (transList)
+        {
+            if(transList)
+            {
+                transList.forEach(function(trans)
+                {
+                    addTranslationToCompanyObj(trans, tenantId, companyId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //--------------- ADD TRANSFER CODES ----------------//
+
+    dbmodel.TransferCode.find({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (transCode)
+        {
+            if(transCode)
+            {
+                addTransferCodeToCompanyObj(transCode, tenantId, companyId);
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+    //--------------- ADD CALLSERVERS ----------------//
+
+    dbmodel.CallServer.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (csList)
+        {
+            if(csList)
+            {
+                csList.forEach(function(cs)
+                {
+                    addCallServerToCompanyObj(cs, tenantId, companyId);
+                    addCallServerByIdToCache(cs.id, cs);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+    //------------ADD CONTEXTS --------------//
+
+    dbmodel.Context.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (ctxtList)
+        {
+            if(ctxtList)
+            {
+                ctxtList.forEach(function(ctxt)
+                {
+                    addContextToCache(ctxt.Context, ctxt);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+    //-------------- ADD TRUNK NUMBERS ----------------//
+
+    dbmodel.TrunkPhoneNumber.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (trNumList)
+        {
+            if(trNumList)
+            {
+                trNumList.forEach(function(trNum)
+                {
+                    addTrunkNumberByIdToCache(trNum.id, companyId, tenantId, trNum);
+                    addTrunkNumberToCache(trNum.PhoneNumber, trNum);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD DIDNUMBERS --------------//
+
+    dbmodel.DidNumer.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (didList)
+        {
+            if(didList)
+            {
+                didList.forEach(function(did)
+                {
+                    addDidNumberToCache(did.DidNumber, companyId, tenantId, did);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD LIMITS --------------//
+
+    dbmodel.LimitInfo.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (limitList)
+        {
+            if(limitList)
+            {
+                limitList.forEach(function(lim)
+                {
+                    addLimitToCache(lim.LimitId, companyId, tenantId, lim);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD NUMBER BLACK LIST --------------//
+
+    dbmodel.NumberBacklist.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (blNumList)
+        {
+            if(blNumList)
+            {
+                blNumList.forEach(function(blNum)
+                {
+                    addNumberBLToCache(blNum.PhoneNumber, companyId, tenantId, blNum);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD EXTENSION LIST --------------//
+
+    dbmodel.Extension.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (extList)
+        {
+            if(extList)
+            {
+                extList.forEach(function(ext)
+                {
+                    addExtensionToCache(ext, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD SIP USER LIST --------------//
+
+    dbmodel.SipUACEndpoint.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (sipUserList)
+        {
+            if(sipUserList)
+            {
+                sipUserList.forEach(function(sipUser)
+                {
+                    addSipUserToCache(sipUser, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD GROUP LIST --------------//
+
+    dbmodel.UserGroup.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (grpList)
+        {
+            if(grpList)
+            {
+                grpList.forEach(function(grp)
+                {
+                    addGroupToCache(grp, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD CONFERENCE LIST --------------//
+
+    dbmodel.Conference.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (confList)
+        {
+            if(confList)
+            {
+                confList.forEach(function(conf)
+                {
+                    addConferenceToCache(conf, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD PBX USER LIST --------------//
+
+    dbmodel.PBXUser.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (pbxList)
+        {
+            if(pbxList)
+            {
+                pbxList.forEach(function(pbx)
+                {
+                    addPABXUserToCache(pbx.UserUuid, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD FC LIST --------------//
+
+    dbmodel.FeatureCode.find({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (fc)
+        {
+            if(fc)
+            {
+                addFeatureCodeToCache(fc, companyId, tenantId);
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD PBX COMPANY INFO --------------//
+
+    dbmodel.PBXMasterData.find({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (pbxMaster)
+        {
+            if(pbxMaster)
+            {
+                addPBXCompDataToCache(pbxMaster, companyId, tenantId);
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD SCHEDULE LIST --------------//
+
+    dbmodel.Schedule.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (scheduleList)
+        {
+            if(scheduleList)
+            {
+                scheduleList.forEach(function(schedule)
+                {
+                    addScheduleToCache(schedule.id, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+    //------------ADD EMERGENCY NUMBERS LIST --------------//
+
+    dbmodel.EmergencyNumber.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+        .then(function (eNumList)
+        {
+            if(eNumList)
+            {
+                eNumList.forEach(function(eNum)
+                {
+                    addEmergencyNumberToCache(eNum, companyId, tenantId);
+                });
+            }
+
+
+        }).catch(function(err)
+        {
+
+        });
+
+
+};
+
+
+
+
+
+
+
 
 var addClusterToCache = function(clusterId)
 {
@@ -1889,8 +2389,6 @@ var addEmergencyNumberToCache = function(eNumObj, companyId, tenantId)
 
         }
 
-
-
     }
     catch(ex)
     {
@@ -1969,4 +2467,7 @@ module.exports.removeScheduleFromCache = removeScheduleFromCache;
 module.exports.addScheduleToCache = addScheduleToCache;
 module.exports.addEmergencyNumberToCache = addEmergencyNumberToCache;
 module.exports.removeEmergencyNumberFromCache = removeEmergencyNumberFromCache;
+
+
+module.exports.addDataToCache = addDataToCache;
 
