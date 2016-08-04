@@ -1874,39 +1874,46 @@ var addScheduleToCache = function(scheduleId, companyId, tenantId)
 
 };
 
-var addEmergencyNumbersToCache = function(companyId, tenantId)
+var addEmergencyNumberToCache = function(eNumObj, companyId, tenantId)
 {
     try
     {
-        var keyENum = 'EMERGENCYNUMBER:' + tenantId + ':' + companyId;
+        if(eNumObj && eNumObj.EmergencyNum)
+        {
+            var keyENum = 'EMERGENCYNUMBER:' + tenantId + ':' + companyId + ':' + eNumObj.EmergencyNum;
 
-        dbmodel.EmergencyNumber.findAll({where :[{CompanyId: companyId},{TenantId: tenantId}]})
-            .then(function (eNumList)
-            {
-                var eNumCacheObj = {};
-                if(eNumList && eNumList.length >0)
-                {
-                    eNumList.forEach(function(eNum)
-                    {
-                        if(eNum && eNum.EmergencyNum)
-                        {
-                            eNumCacheObj[eNum.EmergencyNum] = eNum;
-                        }
-
-                    });
-
-                    client.set(keyENum, JSON.stringify(eNumCacheObj), function(err, response)
-                    {
-
-                    });
-
-                }
-
-
-            }).catch(function(err)
+            client.set(keyENum, JSON.stringify(eNumObj), function(err, response)
             {
 
             });
+
+        }
+
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
+var removeEmergencyNumberFromCache = function(eNum, companyId, tenantId)
+{
+    try
+    {
+        if(eNum)
+        {
+            var keyENum = 'EMERGENCYNUMBER:' + tenantId + ':' + companyId + ':' + eNum;
+
+            client.del(keyENum, function(err, response)
+            {
+
+            });
+
+        }
+
 
 
     }
@@ -1960,5 +1967,6 @@ module.exports.addPBXCompDataToCache = addPBXCompDataToCache;
 module.exports.removePBXCompDataFromCache = removePBXCompDataFromCache;
 module.exports.removeScheduleFromCache = removeScheduleFromCache;
 module.exports.addScheduleToCache = addScheduleToCache;
-module.exports.addEmergencyNumbersToCache = addEmergencyNumbersToCache;
+module.exports.addEmergencyNumberToCache = addEmergencyNumberToCache;
+module.exports.removeEmergencyNumberFromCache = removeEmergencyNumberFromCache;
 
