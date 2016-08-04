@@ -1874,6 +1874,49 @@ var addScheduleToCache = function(scheduleId, companyId, tenantId)
 
 };
 
+var addEmergencyNumbersToCache = function(companyId, tenantId)
+{
+    try
+    {
+        var keyENum = 'EMERGENCYNUMBER:' + tenantId + ':' + companyId;
+
+        dbmodel.EmergencyNumber.findAll({where :[{CompanyId: companyId},{TenantId: tenantId}]})
+            .then(function (eNumList)
+            {
+                var eNumCacheObj = {};
+                if(eNumList && eNumList.length >0)
+                {
+                    eNumList.forEach(function(eNum)
+                    {
+                        if(eNum && eNum.EmergencyNum)
+                        {
+                            eNumCacheObj[eNum.EmergencyNum] = eNum;
+                        }
+
+                    });
+
+                    client.set(keyENum, JSON.stringify(eNumCacheObj), function(err, response)
+                    {
+
+                    });
+
+                }
+
+
+            }).catch(function(err)
+            {
+
+            });
+
+
+    }
+    catch(ex)
+    {
+
+    }
+
+};
+
 
 module.exports.addContextToCache = addContextToCache;
 module.exports.removeContextFromCache = removeContextFromCache;
@@ -1917,4 +1960,5 @@ module.exports.addPBXCompDataToCache = addPBXCompDataToCache;
 module.exports.removePBXCompDataFromCache = removePBXCompDataFromCache;
 module.exports.removeScheduleFromCache = removeScheduleFromCache;
 module.exports.addScheduleToCache = addScheduleToCache;
+module.exports.addEmergencyNumbersToCache = addEmergencyNumbersToCache;
 
