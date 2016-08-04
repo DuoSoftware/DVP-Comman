@@ -13,11 +13,12 @@ var password = Config.Redis.password;
 
 var client = redis.createClient(redisPort, redisIp);
 
-client.select(10, function() { /* ... */ });
-
 client.auth(password, function (error) {
     console.log("Redis Auth Error : "+error);
 });
+
+client.select(9, function() { /* ... */ });
+
 client.on("error", function (err) {
     console.log("Error " + err);
 
@@ -34,7 +35,7 @@ var redlock = new Redlock(
 
 redlock.on('clientError', function(err)
 {
-    logger.error('[DVP-ClusterConfiguration.AcquireLock] - [%s] - REDIS LOCK FAILED', err);
+    logger.error('[DVP-Common.AcquireLock] - [%s] - REDIS LOCK FAILED', err);
 
 });
 
@@ -53,9 +54,14 @@ var addClusterToCache = function(clusterId)
                 {
                     client.set('CLOUD:' + clusterId, JSON.stringify(cloudRec), function(err, setResp)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
+
                         lock.unlock()
                             .catch(function(err) {
-                                logger.error('[DVP-ClusterConfiguration.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                             });
                     });
                 }
@@ -63,7 +69,7 @@ var addClusterToCache = function(clusterId)
                 {
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
                 }
 
@@ -71,12 +77,12 @@ var addClusterToCache = function(clusterId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             });
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addClusterToCache] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 
 };
@@ -95,9 +101,13 @@ var addTrunkToCache = function(trunkId)
                 {
                     client.set('TRUNK:' + trunkId, JSON.stringify(trunk), function(err, setResp)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
                         lock.unlock()
                             .catch(function(err) {
-                                logger.error('[DVP-ClusterConfiguration.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                logger.error('[DVP-Common.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                             });
                     });
                 }
@@ -105,7 +115,7 @@ var addTrunkToCache = function(trunkId)
                 {
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
                 }
 
@@ -113,12 +123,12 @@ var addTrunkToCache = function(trunkId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addTrunkToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             });
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addTrunkToCache] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addTrunkToCache] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 
 };
@@ -135,6 +145,10 @@ var addSipProfileToCompanyObj = function(profileObj, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -159,9 +173,13 @@ var addSipProfileToCompanyObj = function(profileObj, tenantId, companyId)
 
             client.set(key, JSON.stringify(compObj), function(err, compObj)
             {
+                if(err)
+                {
+                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                }
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -169,7 +187,7 @@ var addSipProfileToCompanyObj = function(profileObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addSipProfileToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addSipProfileToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -185,6 +203,11 @@ var addCloudEndUserToCompanyObj = function(euObj, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
+
             var compObj = {};
             if(compStr)
             {
@@ -209,9 +232,13 @@ var addCloudEndUserToCompanyObj = function(euObj, tenantId, companyId)
 
             client.set(key, JSON.stringify(compObj), function(err, compObj)
             {
+                if(err)
+                {
+                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                }
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -219,7 +246,7 @@ var addCloudEndUserToCompanyObj = function(euObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addCloudEndUserToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -235,6 +262,10 @@ var removeCloudEndUserFromCompanyObj = function(euId, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -255,9 +286,13 @@ var removeCloudEndUserFromCompanyObj = function(euId, tenantId, companyId)
                 delete compObj.CloudEndUser[euId];
                 client.set(key, JSON.stringify(compObj), function(err, compObj)
                 {
+                    if(err)
+                    {
+                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                    }
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -266,7 +301,7 @@ var removeCloudEndUserFromCompanyObj = function(euId, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -275,7 +310,7 @@ var removeCloudEndUserFromCompanyObj = function(euId, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -292,6 +327,10 @@ var addCallRuleToCompanyObj = function(ruleObj, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -316,9 +355,13 @@ var addCallRuleToCompanyObj = function(ruleObj, tenantId, companyId)
 
             client.set(key, JSON.stringify(compObj), function(err, compObj)
             {
+                if(err)
+                {
+                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                }
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addCallRuleToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addCallRuleToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -326,7 +369,7 @@ var addCallRuleToCompanyObj = function(ruleObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addCallRuleToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addCallRuleToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -342,6 +385,10 @@ var removeCallRuleFromCompanyObj = function(ruleId, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -362,9 +409,13 @@ var removeCallRuleFromCompanyObj = function(ruleId, tenantId, companyId)
                 delete compObj.CallRule[ruleId];
                 client.set(key, JSON.stringify(compObj), function(err, compObj)
                 {
+                    if(err)
+                    {
+                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                    }
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -373,7 +424,7 @@ var removeCallRuleFromCompanyObj = function(ruleId, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.removeCallRuleFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -382,7 +433,7 @@ var removeCallRuleFromCompanyObj = function(ruleId, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -398,6 +449,10 @@ var addApplicationToCompanyObj = function(appObj, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -422,9 +477,13 @@ var addApplicationToCompanyObj = function(appObj, tenantId, companyId)
 
             client.set(key, JSON.stringify(compObj), function(err, compObj)
             {
+                if(err)
+                {
+                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                }
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addApplicationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addApplicationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -432,7 +491,7 @@ var addApplicationToCompanyObj = function(appObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addApplicationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addApplicationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -448,6 +507,10 @@ var removeApplicationFromCompanyObj = function(appId, tenantId, companyId)
     {
         client.get(key, function(err, compStr)
         {
+            if(err)
+            {
+                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+            }
             var compObj = {};
             if(compStr)
             {
@@ -468,9 +531,13 @@ var removeApplicationFromCompanyObj = function(appId, tenantId, companyId)
                 delete compObj.Application[appId];
                 client.set(key, JSON.stringify(compObj), function(err, compObj)
                 {
+                    if(err)
+                    {
+                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                    }
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -479,7 +546,7 @@ var removeApplicationFromCompanyObj = function(appId, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -488,7 +555,7 @@ var removeApplicationFromCompanyObj = function(appId, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -530,7 +597,7 @@ var addTranslationToCompanyObj = function(transObj, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addTranslationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addTranslationToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -538,7 +605,7 @@ var addTranslationToCompanyObj = function(transObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addTranslationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addTranslationToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -576,7 +643,7 @@ var removeTranslationFromCompanyObj = function(transId, tenantId, companyId)
                 {
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -585,7 +652,7 @@ var removeTranslationFromCompanyObj = function(transId, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.removeApplicationFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -594,7 +661,7 @@ var removeTranslationFromCompanyObj = function(transId, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -637,7 +704,7 @@ var addTransferCodeToCompanyObj = function(tcObj, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -645,7 +712,7 @@ var addTransferCodeToCompanyObj = function(tcObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addTransferCodeToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -683,7 +750,7 @@ var removeTransferCodeFromCompanyObj = function(tenantId, companyId)
                 {
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -692,7 +759,7 @@ var removeTransferCodeFromCompanyObj = function(tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -701,7 +768,7 @@ var removeTransferCodeFromCompanyObj = function(tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.removeCloudEndUserFromCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -739,7 +806,7 @@ var removeSipProfileFromCompanyObj = function(profileId, tenantId, companyId)
                 {
                     lock.unlock()
                         .catch(function(err) {
-                            logger.error('[DVP-ClusterConfiguration.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                            logger.error('[DVP-Common.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                         });
 
                 });
@@ -748,7 +815,7 @@ var removeSipProfileFromCompanyObj = function(profileId, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.addSipProfileToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
             }
 
@@ -757,7 +824,7 @@ var removeSipProfileFromCompanyObj = function(profileId, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.addSipProfileToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.addSipProfileToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -799,7 +866,7 @@ var addCallServerToCompanyObj = function(newCsObj, tenantId, companyId)
             {
                 lock.unlock()
                     .catch(function(err) {
-                        logger.error('[DVP-ClusterConfiguration.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        logger.error('[DVP-Common.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK RELEASE FAILED', err);
                     });
 
             });
@@ -807,7 +874,7 @@ var addCallServerToCompanyObj = function(newCsObj, tenantId, companyId)
 
     }).catch(function(err)
     {
-        logger.error('[DVP-ClusterConfiguration.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
+        logger.error('[DVP-Common.checkAndSetCallServerToCompanyObj] - [%s] - REDIS LOCK ACQUIRE FAILED', err);
     });
 };
 
@@ -817,7 +884,7 @@ var addContextToCache = function(context, contextObj)
     {
         var key = 'CONTEXT:' + context;
 
-        client.set(key, JSON.strigify(contextObj), function(err, response)
+        client.set(key, JSON.stringify(contextObj), function(err, response)
         {
 
         });
@@ -855,7 +922,7 @@ var addTrunkNumberByIdToCache = function(trNumId, companyId, tenantId, trunkNumO
     {
         var key = 'TRUNKNUMBERBYID:' + tenantId + ':' + companyId + ':' + trNumId;
 
-        client.set(key, JSON.strigify(trunkNumObj), function(err, response)
+        client.set(key, JSON.stringify(trunkNumObj), function(err, response)
         {
 
         });
@@ -874,7 +941,7 @@ var addTrunkNumberToCache = function(trNumber, trunkNumObj)
     {
         var key = 'TRUNKNUMBER:' + trNumber;
 
-        client.set(key, JSON.strigify(trunkNumObj), function(err, response)
+        client.set(key, JSON.stringify(trunkNumObj), function(err, response)
         {
 
         });
@@ -893,7 +960,7 @@ var addDidNumberToCache = function(didNumber, companyId, tenantId, didNumObj)
     {
         var key = 'DIDNUMBER:' + tenantId + ':' + companyId + ':' + didNumber;
 
-        client.set(key, JSON.strigify(didNumObj), function(err, response)
+        client.set(key, JSON.stringify(didNumObj), function(err, response)
         {
 
         });
@@ -950,7 +1017,7 @@ var addLimitToCache = function(limitId, companyId, tenantId, limObj)
     {
         var key = 'LIMIT:' + tenantId + ':' + companyId + ':' + limitId;
 
-        client.set(key, JSON.strigify(limObj), function(err, response)
+        client.set(key, JSON.stringify(limObj), function(err, response)
         {
 
         });
@@ -988,7 +1055,7 @@ var addNumberBLToCache = function(blNumber, companyId, tenantId, blObj)
     {
         var key = 'NUMBERBLACKLIST:' + tenantId + ':' + companyId + ':' + blNumber;
 
-        client.set(key, JSON.strigify(blObj), function(err, response)
+        client.set(key, JSON.stringify(blObj), function(err, response)
         {
 
         });
@@ -1064,7 +1131,7 @@ var addCallServerByIdToCache = function(csId, csObj)
     {
         var key = 'CALLSERVER:' + csId;
 
-        client.set(key, JSON.strigify(csObj), function(err, response)
+        client.set(key, JSON.stringify(csObj), function(err, response)
         {
 
         });
@@ -1087,8 +1154,12 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
         {
             var keyExtById = 'EXTENSIONBYID:' + tenantId + ':' + companyId + ':' + extensionObj.id;
 
-            client.set(keyExtById, JSON.strigify(extensionObj), function(err, response)
+            client.set(keyExtById, JSON.stringify(extensionObj), function(err, response)
             {
+                if(err)
+                {
+                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                }
 
             });
         }
@@ -1097,6 +1168,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
     }
     catch(ex)
     {
+        if(ex)
+        {
+            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', ex);
+        }
 
     }
 
@@ -1113,8 +1188,12 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
                         {
+                            if(err)
+                            {
+                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                            }
 
                         });
 
@@ -1128,15 +1207,23 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                             dbmodel.SipUACEndpoint.find({where: [{id: resExt.SipUACEndpoint.id}], include: [{model: dbmodel.Extension, as:'Extension'}]})
                                 .then(function (resUser)
                                 {
-                                    client.set(keySipUserById, JSON.strigify(resUser), function(err, response)
+                                    client.set(keySipUserById, JSON.stringify(resUser), function(err, response)
                                     {
+                                        if(err)
+                                        {
+                                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                        }
 
                                     });
 
                                     if(resExt.SipUACEndpoint.SipUsername)
                                     {
-                                        client.set(keySipUserByName, JSON.strigify(resUser), function(err, response)
+                                        client.set(keySipUserByName, JSON.stringify(resUser), function(err, response)
                                         {
+                                            if(err)
+                                            {
+                                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                            }
 
                                         });
                                     }
@@ -1144,6 +1231,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
 
                                 }).catch(function(err)
                                 {
+                                    if(err)
+                                    {
+                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                    }
 
                                 });
 
@@ -1154,6 +1245,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
 
                     }).catch(function(err)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
                     });
 
             }
@@ -1162,8 +1257,12 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.UserGroup, as:'UserGroup'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
                         {
+                            if(err)
+                            {
+                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                            }
 
                         });
 
@@ -1175,12 +1274,20 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                             dbmodel.UserGroup.find({where: [{id: resExt.UserGroup.id}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                                 .then(function (resGrp)
                                 {
-                                    client.set(keyGroupById, JSON.strigify(resGrp), function(err, response)
+                                    client.set(keyGroupById, JSON.stringify(resGrp), function(err, response)
                                     {
+                                        if(err)
+                                        {
+                                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                        }
 
                                     });
                                 }).catch(function(err)
                                 {
+                                    if(err)
+                                    {
+                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                    }
 
                                 });
 
@@ -1188,6 +1295,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
 
                     }).catch(function(err)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
                     });
 
             }
@@ -1196,21 +1307,33 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.Conference, as:'Conference'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
                         {
+                            if(err)
+                            {
+                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                            }
 
                         });
 
                     }).catch(function(err)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
                     });
 
             }
             else
             {
 
-                client.set(keyExt, JSON.strigify(extensionObj), function(err, response)
+                client.set(keyExt, JSON.stringify(extensionObj), function(err, response)
                 {
+                    if(err)
+                    {
+                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                    }
 
                 });
             }
@@ -1224,6 +1347,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
     }
     catch(ex)
     {
+        if(ex)
+        {
+            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', ex);
+        }
 
     }
 };
@@ -1239,16 +1366,24 @@ var addSipUserToCache = function(sipUserObj, companyId, tenantId)
             dbmodel.SipUACEndpoint.find({where: [{id: sipUserObj.id, TenantId: tenantId, CompanyId: companyId}], include: [{model: dbmodel.Extension, as:'Extension'}]})
                 .then(function (resUser)
                 {
-                    client.set(keySipUserById, JSON.strigify(resUser), function(err, response)
+                    client.set(keySipUserById, JSON.stringify(resUser), function(err, response)
                     {
+                        if(err)
+                        {
+                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                        }
 
                     });
 
                     if(resUser.SipUsername)
                     {
                         var keySipUserByName = 'SIPUSER:' + resUser.SipUsername;
-                        client.set(keySipUserByName, JSON.strigify(resUser), function(err, response)
+                        client.set(keySipUserByName, JSON.stringify(resUser), function(err, response)
                         {
+                            if(err)
+                            {
+                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                            }
 
                         });
                     }
@@ -1260,8 +1395,12 @@ var addSipUserToCache = function(sipUserObj, companyId, tenantId)
                             {
                                 var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
 
-                                client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                                client.set(keyExt, JSON.stringify(resExt), function(err, response)
                                 {
+                                    if(err)
+                                    {
+                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                    }
 
                                 });
 
@@ -1269,6 +1408,10 @@ var addSipUserToCache = function(sipUserObj, companyId, tenantId)
                     }
                 }).catch(function(err)
                 {
+                    if(err)
+                    {
+                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                    }
 
                 });
         }
@@ -1277,6 +1420,10 @@ var addSipUserToCache = function(sipUserObj, companyId, tenantId)
     }
     catch(ex)
     {
+        if(ex)
+        {
+            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', ex);
+        }
 
     }
 };
@@ -1293,7 +1440,7 @@ var addGroupToCache = function(groupObj, companyId, tenantId)
             dbmodel.UserGroup.find({where: [{id: groupObj.id, CompanyId: companyId, TenantId: tenantId}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                 .then(function (resGrp)
                 {
-                    client.set(keyGroupById, JSON.strigify(resGrp), function(err, response)
+                    client.set(keyGroupById, JSON.stringify(resGrp), function(err, response)
                     {
 
                     });
@@ -1304,7 +1451,7 @@ var addGroupToCache = function(groupObj, companyId, tenantId)
                             .then(function (resExt)
                             {
                                 var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
-                                client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                                client.set(keyExt, JSON.stringify(resExt), function(err, response)
                                 {
 
                                 });
@@ -1364,7 +1511,7 @@ var removeGroupFromCache = function(groupId, companyId, tenantId)
                             extCache.UserGroup = null;
                         }
 
-                        client.set(keyExt, JSON.strigify(extCache), function(err, response)
+                        client.set(keyExt, JSON.stringify(extCache), function(err, response)
                         {
 
                         });
@@ -1429,7 +1576,7 @@ var removeExtensionFromCache = function(extension, companyId, tenantId)
                                 {
                                     usrCacheById.Extension = null;
 
-                                    client.set(keySipUserById, JSON.strigify(usrCacheById), function(err, response)
+                                    client.set(keySipUserById, JSON.stringify(usrCacheById), function(err, response)
                                     {
 
                                     });
@@ -1453,7 +1600,7 @@ var removeExtensionFromCache = function(extension, companyId, tenantId)
                                 {
                                     usrCache.Extension = null;
 
-                                    client.set(keySipUser, JSON.strigify(usrCache), function(err, response)
+                                    client.set(keySipUser, JSON.stringify(usrCache), function(err, response)
                                     {
 
                                     });
@@ -1480,7 +1627,7 @@ var removeExtensionFromCache = function(extension, companyId, tenantId)
                             {
                                 grpCacheById.Extension = null;
 
-                                client.set(keyGroupById, JSON.strigify(grpCacheById), function(err, response)
+                                client.set(keyGroupById, JSON.stringify(grpCacheById), function(err, response)
                                 {
 
                                 });
@@ -1519,7 +1666,7 @@ var addConferenceToCache = function(conferenceObj, companyId, tenantId)
             dbmodel.Conference.find({where: [{ConferenceName: conferenceObj.ConferenceName, CompanyId: companyId, TenantId: tenantId}], include: [{model: dbmodel.ConferenceUser, as:'ConferenceUser'}]})
                 .then(function (resConf)
                 {
-                    client.set(keyConference, JSON.strigify(resConf), function(err, response)
+                    client.set(keyConference, JSON.stringify(resConf), function(err, response)
                     {
 
                     });
@@ -1537,7 +1684,7 @@ var addConferenceToCache = function(conferenceObj, companyId, tenantId)
                     {
                         var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
 
-                        client.set(keyExt, JSON.strigify(resExt), function(err, response)
+                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
                         {
 
                         });
@@ -1570,12 +1717,12 @@ var addPABXUserToCache = function(pabxUserUuid, companyId, tenantId)
         {
             var keyPbxUser = 'PBXUSER:' + tenantId + ':' + companyId + ':' + pabxUserUuid;
 
-            dbModel.PBXUser.find({where :[{CompanyId: companyId},{TenantId: tenantId},{UserUuid: pabxUserUuid}], include : [{model: dbModel.PBXUserTemplate, as: "PBXUserTemplateActive"}, {model: dbModel.FollowMe, as: "FollowMe", include: [{model: dbModel.PBXUser, as: "DestinationUser"}]}, {model: dbModel.Forwarding, as: "Forwarding"}]})
+            dbmodel.PBXUser.find({where :[{CompanyId: companyId},{TenantId: tenantId},{UserUuid: pabxUserUuid}], include : [{model: dbmodel.PBXUserTemplate, as: "PBXUserTemplateActive"}, {model: dbmodel.FollowMe, as: "FollowMe", include: [{model: dbmodel.PBXUser, as: "DestinationUser"}]}, {model: dbmodel.Forwarding, as: "Forwarding"}]})
                 .then(function (usrObj)
                 {
                     if(usrObj)
                     {
-                        client.set(keyPbxUser, JSON.strigify(usrObj), function(err, response)
+                        client.set(keyPbxUser, JSON.stringify(usrObj), function(err, response)
                         {
 
                         });
@@ -1603,7 +1750,7 @@ var addFeatureCodeToCache = function(fcObj, companyId, tenantId)
     {
         var key = 'FEATURECODE:' + tenantId + ':' + companyId;
 
-        client.set(key, JSON.strigify(fcObj), function(err, response)
+        client.set(key, JSON.stringify(fcObj), function(err, response)
         {
 
         });
@@ -1641,7 +1788,7 @@ var addPBXCompDataToCache = function(compObj, companyId, tenantId)
     {
         var key = 'PBXCOMPANYINFO:' + tenantId + ':' + companyId;
 
-        client.set(key, JSON.strigify(compObj), function(err, response)
+        client.set(key, JSON.stringify(compObj), function(err, response)
         {
 
         });
@@ -1700,12 +1847,12 @@ var addScheduleToCache = function(scheduleId, companyId, tenantId)
         {
             var keyPbxUser = 'SCHEDULE:' + tenantId + ':' + companyId + ':' + scheduleId;
 
-            dbModel.Schedule.find({where :[{CompanyId: companyId},{TenantId: tenantId},{id: scheduleId}], include : [{model: dbModel.Appointment, as: "Appointment"}]})
+            dbmodel.Schedule.find({where :[{CompanyId: companyId},{TenantId: tenantId},{id: scheduleId}], include : [{model: dbmodel.Appointment, as: "Appointment"}]})
                 .then(function (schedule)
                 {
                     if(schedule)
                     {
-                        client.set(keyPbxUser, JSON.strigify(schedule), function(err, response)
+                        client.set(keyPbxUser, JSON.stringify(schedule), function(err, response)
                         {
 
                         });
