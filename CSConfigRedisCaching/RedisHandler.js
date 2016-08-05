@@ -29,8 +29,11 @@ var redlock = new Redlock(
     [client],
     {
         driftFactor: 0.01,
-        retryCount:  3,
+
+        retryCount:  10000,
+
         retryDelay:  200
+
     }
 );
 
@@ -59,46 +62,6 @@ var addDataToCache = function(companyId, tenantId)
         {
 
         });
-
-    //--------------- ADD TRUNKS ----------------//
-
-    dbmodel.Trunk.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
-        .then(function (trunkList)
-        {
-            if(trunkList)
-            {
-                trunkList.forEach(function(trunk)
-                {
-                    addTrunkToCache(trunk.id);
-                });
-            }
-
-
-        }).catch(function(err)
-        {
-
-        });
-
-
-    //--------------- ADD TRUNKS ----------------//
-
-    dbmodel.Trunk.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
-        .then(function (trunkList)
-        {
-            if(trunkList)
-            {
-                trunkList.forEach(function(trunk)
-                {
-                    addTrunkToCache(trunk.id);
-                });
-            }
-
-
-        }).catch(function(err)
-        {
-
-        });
-
 
     //--------------- ADD TRUNKS ----------------//
 
@@ -298,7 +261,7 @@ var addDataToCache = function(companyId, tenantId)
 
     //------------ADD DIDNUMBERS --------------//
 
-    dbmodel.DidNumer.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+    dbmodel.DidNumber.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
         .then(function (didList)
         {
             if(didList)
@@ -338,7 +301,7 @@ var addDataToCache = function(companyId, tenantId)
 
     //------------ADD NUMBER BLACK LIST --------------//
 
-    dbmodel.NumberBacklist.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
+    dbmodel.NumberBlacklist.findAll({where:[{CompanyId: companyId},{TenantId: tenantId}]})
         .then(function (blNumList)
         {
             if(blNumList)
