@@ -5,9 +5,12 @@
   "main": "test.js",
   "dependencies": {
     "config": "^1.21.0",
+    "dustjs-linkedin": "^2.7.3",
     "dvp-dbmodels": "^0.3.4",
     "hashids": "^1.1.0",
+    "juice": "^2.0.0",
     "moment": "^2.14.1",
+    "node-uuid": "^1.4.7",
     "redis": "^2.4.2",
     "redlock": "^2.0.0",
     "shortid": "^2.2.6",
