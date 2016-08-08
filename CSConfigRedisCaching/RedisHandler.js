@@ -557,7 +557,7 @@ var addTrunkToCache = function(trunkId)
 
     redlock.lock(lockKey, ttl).then(function(lock)
     {
-        dbModel.Trunk.find({ where:[{id: trunkId}], include : [{model: dbModel.TrunkIpAddress, as: "TrunkIpAddress"}]})
+        dbmodel.Trunk.find({ where:[{id: trunkId}], include : [{model: dbmodel.TrunkIpAddress, as: "TrunkIpAddress"}]})
             .then(function (trunk)
             {
                 if (trunk)
