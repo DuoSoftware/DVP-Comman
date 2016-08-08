@@ -557,7 +557,7 @@ var addTrunkToCache = function(trunkId)
 
     redlock.lock(lockKey, ttl).then(function(lock)
     {
-        dbModel.Trunk.find({ where:[{id: trunkId}], include : [{model: dbModel.TrunkIpAddress, as: "TrunkIpAddress"}]})
+        dbmodel.Trunk.find({ where:[{id: trunkId}], include : [{model: dbmodel.TrunkIpAddress, as: "TrunkIpAddress"}]})
             .then(function (trunk)
             {
                 if (trunk)
@@ -1651,26 +1651,50 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
+                        if(resExt)
                         {
-                            if(err)
+                            client.set(keyExt, JSON.stringify(resExt), function(err, response)
                             {
-                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                            }
-
-                        });
-
-                        if(resExt.SipUACEndpoint && resExt.SipUACEndpoint.id)
-                        {
-                            //add sip user by id object
-                            var keySipUserById = 'SIPUSERBYID:' + tenantId + ':' + companyId + ':' + resExt.SipUACEndpoint.id;
-                            var keySipUserByName = 'SIPUSER:' + resExt.SipUACEndpoint.SipUsername;
-
-
-                            dbmodel.SipUACEndpoint.find({where: [{id: resExt.SipUACEndpoint.id}], include: [{model: dbmodel.Extension, as:'Extension'}]})
-                                .then(function (resUser)
+                                if(err)
                                 {
-                                    client.set(keySipUserById, JSON.stringify(resUser), function(err, response)
+                                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                }
+
+                            });
+
+                            if(resExt.SipUACEndpoint && resExt.SipUACEndpoint.id)
+                            {
+                                //add sip user by id object
+                                var keySipUserById = 'SIPUSERBYID:' + tenantId + ':' + companyId + ':' + resExt.SipUACEndpoint.id;
+                                var keySipUserByName = 'SIPUSER:' + resExt.SipUACEndpoint.SipUsername;
+
+
+                                dbmodel.SipUACEndpoint.find({where: [{id: resExt.SipUACEndpoint.id}], include: [{model: dbmodel.Extension, as:'Extension'}]})
+                                    .then(function (resUser)
+                                    {
+                                        client.set(keySipUserById, JSON.stringify(resUser), function(err, response)
+                                        {
+                                            if(err)
+                                            {
+                                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                            }
+
+                                        });
+
+                                        if(resExt.SipUACEndpoint.SipUsername)
+                                        {
+                                            client.set(keySipUserByName, JSON.stringify(resUser), function(err, response)
+                                            {
+                                                if(err)
+                                                {
+                                                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                                }
+
+                                            });
+                                        }
+
+
+                                    }).catch(function(err)
                                     {
                                         if(err)
                                         {
@@ -1679,32 +1703,12 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
 
                                     });
 
-                                    if(resExt.SipUACEndpoint.SipUsername)
-                                    {
-                                        client.set(keySipUserByName, JSON.stringify(resUser), function(err, response)
-                                        {
-                                            if(err)
-                                            {
-                                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                                            }
-
-                                        });
-                                    }
-
-
-                                }).catch(function(err)
-                                {
-                                    if(err)
-                                    {
-                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                                    }
-
-                                });
 
 
 
-
+                            }
                         }
+
 
                     }).catch(function(err)
                     {
@@ -1720,24 +1724,34 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.UserGroup, as:'UserGroup'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
+                        if(resExt)
                         {
-                            if(err)
+                            client.set(keyExt, JSON.stringify(resExt), function(err, response)
                             {
-                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                            }
-
-                        });
-
-                        if(resExt.UserGroup && resExt.UserGroup.id)
-                        {
-                            //add sip user by id object
-                            var keyGroupById = 'USERGROUP:' + tenantId + ':' + companyId + ':' + resExt.UserGroup.id;
-
-                            dbmodel.UserGroup.find({where: [{id: resExt.UserGroup.id}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
-                                .then(function (resGrp)
+                                if(err)
                                 {
-                                    client.set(keyGroupById, JSON.stringify(resGrp), function(err, response)
+                                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                }
+
+                            });
+
+                            if(resExt.UserGroup && resExt.UserGroup.id)
+                            {
+                                //add sip user by id object
+                                var keyGroupById = 'USERGROUP:' + tenantId + ':' + companyId + ':' + resExt.UserGroup.id;
+
+                                dbmodel.UserGroup.find({where: [{id: resExt.UserGroup.id}], include: [{model: dbmodel.Extension, as:'Extension'},{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
+                                    .then(function (resGrp)
+                                    {
+                                        client.set(keyGroupById, JSON.stringify(resGrp), function(err, response)
+                                        {
+                                            if(err)
+                                            {
+                                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                            }
+
+                                        });
+                                    }).catch(function(err)
                                     {
                                         if(err)
                                         {
@@ -1745,16 +1759,10 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                                         }
 
                                     });
-                                }).catch(function(err)
-                                {
-                                    if(err)
-                                    {
-                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                                    }
 
-                                });
-
+                            }
                         }
+
 
                     }).catch(function(err)
                     {
@@ -1770,14 +1778,18 @@ var addExtensionToCache = function(extensionObj, companyId, tenantId)
                 dbmodel.Extension.find({where: [{Extension: extensionObj.Extension},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.Conference, as:'Conference'}]})
                     .then(function (resExt)
                     {
-                        client.set(keyExt, JSON.stringify(resExt), function(err, response)
+                        if(resExt)
                         {
-                            if(err)
+                            client.set(keyExt, JSON.stringify(resExt), function(err, response)
                             {
-                                logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                            }
+                                if(err)
+                                {
+                                    logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                }
 
-                        });
+                            });
+                        }
+
 
                     }).catch(function(err)
                     {
