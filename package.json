@@ -6,7 +6,7 @@
   "dependencies": {
     "config": "^1.21.0",
     "dustjs-linkedin": "^2.7.3",
-    "dvp-dbmodels": "^0.3.6",
+    "dvp-dbmodels": "^0.3.7",
     "hashids": "^1.1.0",
     "juice": "^2.0.0",
     "moment": "^2.14.1",
