@@ -1868,16 +1868,20 @@ var addSipUserToCache = function(sipUserObj, companyId, tenantId)
                         dbmodel.Extension.find({where: [{id: resUser.Extension.id},{TenantId: tenantId},{CompanyId:companyId}], include: [{model: dbmodel.SipUACEndpoint, as:'SipUACEndpoint'}]})
                             .then(function (resExt)
                             {
-                                var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
-
-                                client.set(keyExt, JSON.stringify(resExt), function(err, response)
+                                if(resExt)
                                 {
-                                    if(err)
-                                    {
-                                        logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
-                                    }
+                                    var keyExt = 'EXTENSION:' + tenantId + ':' + companyId + ':' + resExt.Extension;
 
-                                });
+                                    client.set(keyExt, JSON.stringify(resExt), function(err, response)
+                                    {
+                                        if(err)
+                                        {
+                                            logger.error('[DVP-Common-RedisCaching] - [%s] - REDIS ERROR', err);
+                                        }
+
+                                    });
+                                }
+
 
                             });
                     }
