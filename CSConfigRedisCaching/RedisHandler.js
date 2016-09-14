@@ -4,7 +4,7 @@
 var redis = require("redis");
 var Config = require('config');
 var Redlock = require('redlock');
-var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var logger = require('../LogHandler/CommonLogHandler').logger;
 var dbmodel = require('dvp-dbmodels');
 
 var redisIp = Config.Redis.ip;
