@@ -31,7 +31,7 @@ var generate = function(company, tenant, cb) {
     redisClient.incr(key, function (err, reply) {
         if (!err) {
             var id = hashids.encode(tenant, company, reply);
-            cb(true, id);
+            cb(true, id, reply);
         } else {
 
             cb(false);
