@@ -43,7 +43,7 @@ var CheckScheduleValidity = function(schedule)
 
                 if(startTime && endTime)
                 {
-                    if(moment(timeOnly).isBetween(startTime, endTime, null, '[]'))
+                    if(moment(timeOnly, "HH:mm:ss").isBetween(moment(startTime, "HH:mm"), moment(endTime, "HH:mm"), null, '[]'))
                     {
                         timeMatching = true;
                     }
