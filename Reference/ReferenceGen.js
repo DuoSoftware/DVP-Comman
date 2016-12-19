@@ -27,14 +27,14 @@ redisClient.auth(redispass, function (error) {
 var generate = function(company, tenant, cb) {
 
 
-    var key = util.format('%d:%d:counter:%s', tenant, company, key);
-    redisClient.incr(key, function (err, reply) {
+    var keyx = util.format('%d:%d:counter:%s', tenant, company, key);
+    redisClient.incr(keyx, function (err, reply) {
         if (!err) {
 
             if(method == 'prefix'){
 
-                var key = util.format('%d:%d:prefix:%s', tenant, company, key);
-                redisClient.get(key, function (err, prefix) {
+                var keyx = util.format('%d:%d:prefix:%s', tenant, company, key);
+                redisClient.get(keyx, function (err, prefix) {
                     if (!err) {
 
                         var id = util.format('%s-%d', prefix, reply);
