@@ -7,10 +7,18 @@ var DbConn = require('dvp-dbmodels');
 var moment = require('moment');
 var Sequelize = require('sequelize');
 var request = require('request');
+var diff = require('deep-diff').diff;
+var isJSON = require('is-json');
 
 
 module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails, callBack) {
 
+
+    var differences;
+    if(auditTrails.OldValue && auditTrails.NewValue && isJSON(auditTrails.OldValue) && isJSON(auditTrails.NewValue)){
+
+        var differences = diff(auditTrails.OldValue, auditTrails.NewValue);
+    }
 
     DbConn.AuditTrails
         .create(
@@ -21,7 +29,7 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
                 Description: auditTrails.Description,
                 Author: auditTrails.Author,
                 User: iss,
-                OtherJsonData: auditTrails.OtherJsonData,
+                OtherJsonData: differences,
                 ObjectType: auditTrails.ObjectType,
                 Action: auditTrails.Action,
                 Application: auditTrails.Application,
@@ -46,10 +54,33 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     });
 };
 
-module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId,pageSize,pageNo, callBack) {
+module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application, property, starttime, endtime, pageSize, pageNo, callBack) {
+
+
+    var query  = {
+        TenantId: tenantId,
+        CompanyId: companyId
+    };
+
+    if(starttime &&  endtime){
+
+        query.createdAt =  {
+            $lte: new Date(endtime),
+            $gte: new Date(starttime)
+        }
+    }
+
+    if(application){
+        query.Application = application;
+    }
+
+    if(property){
+
+        uery.KeyProperty = property;
+    }
 
     DbConn.AuditTrails.findAll({
-        where: [{TenantId: tenantId}, {CompanyId: companyId}], offset: ((pageNo - 1) * pageSize),
+        where: query, offset: ((pageNo - 1) * pageSize),
         limit: pageSize,order: [['AuditTrailsId', 'DESC']]
     }).then(function (CamObject) {
         callBack(undefined,CamObject);
