@@ -54,42 +54,7 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     });
 };
 
-module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application, property, starttime, endtime, pageSize, pageNo, callBack) {
-
-
-    var query  = {
-        TenantId: tenantId,
-        CompanyId: companyId
-    };
-
-    if(starttime &&  endtime){
-
-        query.createdAt =  {
-            $lte: new Date(endtime),
-            $gte: new Date(starttime)
-        }
-    }
-
-    if(application){
-        query.Application = application;
-    }
-
-    if(property){
-
-        uery.KeyProperty = property;
-    }
-
-    DbConn.AuditTrails.findAll({
-        where: query, offset: ((pageNo - 1) * pageSize),
-        limit: pageSize,order: [['AuditTrailsId', 'DESC']]
-    }).then(function (CamObject) {
-        callBack(undefined,CamObject);
-    }).catch(function (err) {
-        callBack(err,undefined);
-    });
-};
-
-module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application, property, starttime, endtime, callBack) {
+module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application, property, author, starttime, endtime, pageSize, pageNo, callBack) {
 
 
     var query  = {
@@ -112,6 +77,51 @@ module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application,
     if(property){
 
         query.KeyProperty = property;
+    }
+
+    if(author){
+
+        query.Author = author;
+    }
+
+    DbConn.AuditTrails.findAll({
+        where: query, offset: ((pageNo - 1) * pageSize),
+        limit: pageSize,order: [['AuditTrailsId', 'DESC']]
+    }).then(function (CamObject) {
+        callBack(undefined,CamObject);
+    }).catch(function (err) {
+        callBack(err,undefined);
+    });
+};
+
+module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application, property, author, starttime, endtime, callBack) {
+
+
+    var query  = {
+        TenantId: tenantId,
+        CompanyId: companyId
+    };
+
+    if(starttime &&  endtime){
+
+        query.createdAt =  {
+            $lte: new Date(endtime),
+            $gte: new Date(starttime)
+        }
+    }
+
+    if(application){
+        query.Application = application;
+    }
+
+    if(property){
+
+        query.KeyProperty = property;
+    }
+
+    if(author){
+
+        query.Author = author;
     }
 
     //dbModel.CallCDRProcessed.aggregate('*', 'count', {where :[{CreatedTime : { gte: st , lt: et}, CompanyId: companyId, TenantId: tenantId, DVPCallDirection: 'inbound', QueueSec: {lte: abandonCallThreshold}, AgentAnswered: false, ObjType: 'HTTAPI'}]}).then(function(dropCount)
