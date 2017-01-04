@@ -1,13 +1,13 @@
 {
   "name": "dvp-common",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Common data models and scripts for DVP",
   "main": "test.js",
   "dependencies": {
     "config": "^1.21.0",
     "deep-diff": "^0.3.4",
     "dustjs-linkedin": "^2.7.3",
-    "dvp-dbmodels": "^0.5.5",
+    "dvp-dbmodels": "^0.7.5",
     "hashids": "^1.1.0",
     "is-json": "^2.0.1",
     "juice": "^2.0.0",
