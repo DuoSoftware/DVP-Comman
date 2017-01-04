@@ -88,3 +88,38 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
         callBack(err,undefined);
     });
 };
+
+module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application, property, starttime, endtime, callBack) {
+
+
+    var query  = {
+        TenantId: tenantId,
+        CompanyId: companyId
+    };
+
+    if(starttime &&  endtime){
+
+        query.createdAt =  {
+            $lte: new Date(endtime),
+            $gte: new Date(starttime)
+        }
+    }
+
+    if(application){
+        query.Application = application;
+    }
+
+    if(property){
+
+        query.KeyProperty = property;
+    }
+
+    //dbModel.CallCDRProcessed.aggregate('*', 'count', {where :[{CreatedTime : { gte: st , lt: et}, CompanyId: companyId, TenantId: tenantId, DVPCallDirection: 'inbound', QueueSec: {lte: abandonCallThreshold}, AgentAnswered: false, ObjType: 'HTTAPI'}]}).then(function(dropCount)
+
+    DbConn.AuditTrails.aggregate('*', 'count',{where: query
+    }).then(function (count) {
+        callBack(null, count);
+    }).catch(function (err) {
+        callBack(err, 0);
+    });
+};
