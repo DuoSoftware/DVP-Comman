@@ -15,17 +15,28 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
 
 
     var differences;
+
+    var tempNewObj = null;
+    var tempOldObj = null;
     if(auditTrails.OldValue && auditTrails.NewValue && isJSON(auditTrails.OldValue) && isJSON(auditTrails.NewValue)){
 
-        var differences = diff(auditTrails.OldValue, auditTrails.NewValue);
+        tempOldObj = JSON.stringify(auditTrails.OldValue);
+        tempNewObj = JSON.stringify(auditTrails.NewValue);
+
+        differences = diff(auditTrails.OldValue, auditTrails.NewValue);
+    }
+    else
+    {
+        tempOldObj = auditTrails.OldValue;
+        tempNewObj = auditTrails.NewValue;
     }
 
     DbConn.AuditTrails
         .create(
             {
                 KeyProperty: auditTrails.KeyProperty,
-                OldValue: auditTrails.OldValue,
-                NewValue: auditTrails.NewValue,
+                OldValue: tempOldObj,
+                NewValue: tempNewObj,
                 Description: auditTrails.Description,
                 Author: auditTrails.Author,
                 User: iss,
