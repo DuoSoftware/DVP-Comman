@@ -9,6 +9,7 @@ var Sequelize = require('sequelize');
 var request = require('request');
 var diff = require('deep-diff').diff;
 var isJSON = require('is-json');
+var util = require('util');
 
 
 module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails, callBack) {
@@ -16,20 +17,26 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
 
     var differences;
 
-    var tempNewObj = null;
-    var tempOldObj = null;
-    if(auditTrails.OldValue && auditTrails.NewValue && isJSON(auditTrails.OldValue) && isJSON(auditTrails.NewValue)){
+    var tempNewObj = auditTrails.NewValue;
+    var tempOldObj = auditTrails.OldValue;
+
+    if(tempNewObj && util.isObject(tempNewObj) ){
+
+        tempNewObj = JSON.stringify(auditTrails.NewValue);
+    }
+
+    if(tempOldObj && util.isObject(tempOldObj) ){
 
         tempOldObj = JSON.stringify(auditTrails.OldValue);
-        tempNewObj = JSON.stringify(auditTrails.NewValue);
+    }
+
+
+    if(util.isObject(tempNewObj) && util.isObject(tempOldObj) )
+    {
 
         differences = diff(auditTrails.OldValue, auditTrails.NewValue);
     }
-    else
-    {
-        tempOldObj = auditTrails.OldValue;
-        tempNewObj = auditTrails.NewValue;
-    }
+
 
     DbConn.AuditTrails
         .create(
