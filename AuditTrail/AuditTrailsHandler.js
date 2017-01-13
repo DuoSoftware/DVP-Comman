@@ -15,17 +15,28 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
 
 
     var differences;
+
+    var tempNewObj = null;
+    var tempOldObj = null;
     if(auditTrails.OldValue && auditTrails.NewValue && isJSON(auditTrails.OldValue) && isJSON(auditTrails.NewValue)){
 
-        var differences = diff(auditTrails.OldValue, auditTrails.NewValue);
+        tempOldObj = JSON.stringify(auditTrails.OldValue);
+        tempNewObj = JSON.stringify(auditTrails.NewValue);
+
+        differences = diff(auditTrails.OldValue, auditTrails.NewValue);
+    }
+    else
+    {
+        tempOldObj = auditTrails.OldValue;
+        tempNewObj = auditTrails.NewValue;
     }
 
     DbConn.AuditTrails
         .create(
             {
                 KeyProperty: auditTrails.KeyProperty,
-                OldValue: auditTrails.OldValue,
-                NewValue: auditTrails.NewValue,
+                OldValue: tempOldObj,
+                NewValue: tempNewObj,
                 Description: auditTrails.Description,
                 Author: auditTrails.Author,
                 User: iss,
@@ -54,7 +65,7 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     });
 };
 
-module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application, property, starttime, endtime, pageSize, pageNo, callBack) {
+module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application, property, author, starttime, endtime, pageSize, pageNo, callBack) {
 
 
     var query  = {
@@ -77,7 +88,12 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
 
     if(property){
 
-        uery.KeyProperty = property;
+        query.KeyProperty = property;
+    }
+
+    if(author){
+
+        query.Author = author;
     }
 
     DbConn.AuditTrails.findAll({
@@ -87,5 +103,45 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
         callBack(undefined,CamObject);
     }).catch(function (err) {
         callBack(err,undefined);
+    });
+};
+
+module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application, property, author, starttime, endtime, callBack) {
+
+
+    var query  = {
+        TenantId: tenantId,
+        CompanyId: companyId
+    };
+
+    if(starttime &&  endtime){
+
+        query.createdAt =  {
+            $lte: new Date(endtime),
+            $gte: new Date(starttime)
+        }
+    }
+
+    if(application){
+        query.Application = application;
+    }
+
+    if(property){
+
+        query.KeyProperty = property;
+    }
+
+    if(author){
+
+        query.Author = author;
+    }
+
+    //dbModel.CallCDRProcessed.aggregate('*', 'count', {where :[{CreatedTime : { gte: st , lt: et}, CompanyId: companyId, TenantId: tenantId, DVPCallDirection: 'inbound', QueueSec: {lte: abandonCallThreshold}, AgentAnswered: false, ObjType: 'HTTAPI'}]}).then(function(dropCount)
+
+    DbConn.AuditTrails.aggregate('*', 'count',{where: query
+    }).then(function (count) {
+        callBack(null, count);
+    }).catch(function (err) {
+        callBack(err, 0);
     });
 };
