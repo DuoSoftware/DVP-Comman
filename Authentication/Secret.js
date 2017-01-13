@@ -1,5 +1,6 @@
 var redis = require('redis');
 var config = require('config');
+var util = require('util');
 var resource = config.Host.resource;
 
 
@@ -57,6 +58,32 @@ var Secret = function(req, payload, done){
 
 };
 
+var CompanyChatSecret = function(req, payload, done){
+
+    if(payload && payload.iss && payload.jti && payload.company && payload.tenant) {
+        var issuer = payload.iss;
+        var jti = payload.jti;
+
+        var chatKey = util.format('%d:%d:keys:chat:public', payload.tenant, payload.company);
+
+        redisClient.get(chatKey, function (err, key) {
+
+            if (err) {
+                return done(err);
+            }
+            if (!key) {
+                return done(new Error('missing_secret'));
+            }
+            return done(null, key);
+
+        });
+    }else{
+        done(new Error('wrong token format'));
+    }
+};
+
 
 
 module.exports.Secret = Secret;
+
+module.exports.CompanyChatSecret = CompanyChatSecret;

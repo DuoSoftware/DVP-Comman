@@ -1,6 +1,6 @@
 {
   "name": "dvp-common",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "Common data models and scripts for DVP",
   "main": "test.js",
   "dependencies": {
