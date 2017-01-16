@@ -89,6 +89,7 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
     }
 
     if(application){
+
         query.Application = application;
     }
 
