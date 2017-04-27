@@ -509,8 +509,7 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
             method: "POST",
             url: callURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
-                companyinfo: format("{0}:{1}", tenant, company)
+                authorization: "bearer "+config.Services.accessToken
             },
             json: smsData
         }, function (_error, _response, datax) {
@@ -542,7 +541,7 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
 
 }
 
-function CallHttProgrammingAPI(from, to, message, id){
+function CallHttProgrammingAPI(from, to, message, id, cb){
 
 
 
@@ -551,7 +550,7 @@ function CallHttProgrammingAPI(from, to, message, id){
 
 
         var callURL = format("http://{0}/sms", config.Services.httprogrammingurl, config.Services.httprogrammingversion);
-        if (validator.isIP(config.Services.dynamicconfigurl))
+        if (validator.isIP(config.Services.httprogrammingurl))
             callURL = format("http://{0}:{1}/sms", config.Services.httprogrammingurl, config.Services.httprogrammingport, config.Services.httprogrammingversion);
 
         /* var engagementData =  {
@@ -568,7 +567,7 @@ function CallHttProgrammingAPI(from, to, message, id){
             to:to,
             from:from,
             content:message,
-            sessionid:id
+            to:id
 
 
         };
@@ -577,10 +576,9 @@ function CallHttProgrammingAPI(from, to, message, id){
             method: "POST",
             url: callURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
-                companyinfo: format("{0}:{1}", tenant, company)
+                authorization: "bearer "+config.Services.accessToken
             },
-            qs: smsData
+            form: smsData
         }, function (_error, _response, datax) {
 
             try {
