@@ -423,9 +423,9 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
     if((config.Services && config.Services.ruleserviceurl && config.Services.ruleserviceport && config.Services.ruleserviceversion)) {
 
 
-        var callURL = format("http://{0}/DVP/API/{1}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.cronurl, config.Services.cronversion,ani, dnis,category);
-        if (validator.isIP(config.Services.cronurl))
-            callURL = format("http://{0}:{1}/DVP/API/{2}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.cronurl, config.Services.cronport, config.Services.cronversion,ani, dnis,category);
+        var callURL = format("http://{0}/DVP/API/{1}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceversion,ani, dnis,category);
+        if (validator.isIP(config.Services.ruleserviceurl))
+            callURL = format("http://{0}:{1}/DVP/API/{2}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceport, config.Services.ruleserviceversion,ani, dnis,category);
 
         /* var engagementData =  {
 
@@ -437,7 +437,7 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
 
          };*/
 
-        logger.debug("SMS rule service URL %s", cronURL);
+        logger.debug("SMS rule service URL %s", callURL);
         request({
             method: "GET",
             url: callURL,
