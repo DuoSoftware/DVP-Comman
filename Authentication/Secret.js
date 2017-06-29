@@ -8,6 +8,7 @@ var redisip = config.Security.ip;
 var redisport = config.Security.port;
 var redispass = config.Security.password;
 var redismode = config.Security.mode;
+var redisdb = config.Security.db;
 
 
 
@@ -15,6 +16,7 @@ var redisSetting =  {
     port:redisport,
     host:redisip,
     family: 4,
+    db: redisdb,
     password: redispass,
     retryStrategy: function (times) {
         var delay = Math.min(times * 50, 2000);
@@ -41,7 +43,8 @@ if(redismode == 'sentinel'){
 
             redisSetting = {
                 sentinels:sentinelConnections,
-                name: config.Security.sentinels.name
+                name: config.Security.sentinels.name,
+                password:redispass
             }
 
         }else{
