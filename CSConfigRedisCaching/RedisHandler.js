@@ -1,7 +1,7 @@
 /**
  * Created by dinusha on 7/28/2016.
  */
-var redis = require("redis");
+var redis = require("ioredis");
 var config = require('config');
 var Redlock = require('redlock');
 var logger = require('../LogHandler/CommonLogHandler').logger;
