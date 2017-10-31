@@ -441,6 +441,7 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
         request({
             method: "GET",
             url: callURL,
+            json: true,
             headers: {
                 authorization: "bearer "+config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
