@@ -448,11 +448,14 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
             }
         }, function (_error, _response, datax) {
 
+            console.log(datax);
+            console.log(datax.IsSuccess);
+
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body && _response.body.IsSuccess) {
+                if (!_error && _response && _response.statusCode == 200&& datax && datax.IsSuccess) {
 
-                    return cb(true,_response.body.Result);
+                    return cb(true,datax.Result);
 
                 }else{
 
