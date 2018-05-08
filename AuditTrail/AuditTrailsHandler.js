@@ -47,7 +47,7 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
                 Description: auditTrails.Description,
                 Author: auditTrails.Author,
                 User: iss,
-                OtherJsonData: differences,
+                OtherJsonData: JSON.stringify(differences),
                 ObjectType: auditTrails.ObjectType,
                 Action: auditTrails.Action,
                 Application: auditTrails.Application,
@@ -66,6 +66,11 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     DbConn.AuditTrails.findAll({
         where: [{CompanyId: companyId}, {TenantId: tenantId}],order: [['AuditTrailsId', 'DESC']]
     }).then(function (CamObject) {
+        if(CamObject.OtherJsonData)
+        {
+            var oData=CamObject.OtherJsonData;
+            CamObject.OtherJsonData=JSON.parse(oData);
+        }
         callBack(undefined,CamObject);
     }).catch(function (err) {
         callBack(err,undefined);
@@ -107,6 +112,11 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
         where: query, offset: ((pageNo - 1) * pageSize),
         limit: pageSize,order: [['AuditTrailsId', 'DESC']]
     }).then(function (CamObject) {
+        if(CamObject.OtherJsonData)
+        {
+            var oData=CamObject.OtherJsonData;
+            CamObject.OtherJsonData=JSON.parse(oData);
+        }
         callBack(undefined,CamObject);
     }).catch(function (err) {
         callBack(err,undefined);
