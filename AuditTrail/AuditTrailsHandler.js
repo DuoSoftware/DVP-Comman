@@ -31,8 +31,8 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
     }
 
 
-    if(util.isObject(tempNewObj) && util.isObject(tempOldObj) )
-    {
+    if(util.isObject(auditTrails.NewValue) && util.isObject(auditTrails.OldValue) )
+{
 
         differences = diff(auditTrails.OldValue, auditTrails.NewValue);
     }
@@ -118,12 +118,18 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
         where: query, offset: ((pageNo - 1) * pageSize),
         limit: pageSize,order: [['AuditTrailsId', 'DESC']]
     }).then(function (CamObject) {
-        if(CamObject.OtherJsonData)
-        {
-            var oData=CamObject.OtherJsonData;
-            CamObject.OtherJsonData=JSON.parse(oData);
-        }
-        callBack(undefined,CamObject);
+        var CamObj = CamObject.map(function (item) {
+
+            if(item.dataValues.OtherJsonData)
+            {
+                var oData=item.dataValues.OtherJsonData;
+                item.dataValues.OtherJsonData=JSON.parse(oData);
+            }
+            return item;
+
+        });
+
+        callBack(undefined,CamObj);
     }).catch(function (err) {
         callBack(err,undefined);
     });
@@ -168,3 +174,4 @@ module.exports.GetAllAuditTrailsCount =function(tenantId,companyId, application,
         callBack(err, 0);
     });
 };
+
