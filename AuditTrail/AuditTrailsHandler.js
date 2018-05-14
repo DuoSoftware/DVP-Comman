@@ -66,12 +66,18 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     DbConn.AuditTrails.findAll({
         where: [{CompanyId: companyId}, {TenantId: tenantId}],order: [['AuditTrailsId', 'DESC']]
     }).then(function (CamObject) {
-        if(CamObject.OtherJsonData)
-        {
-            var oData=CamObject.OtherJsonData;
-            CamObject.OtherJsonData=JSON.parse(oData);
-        }
-        callBack(undefined,CamObject);
+        var CamObj = CamObject.map(function (item) {
+
+            if(item.dataValues.OtherJsonData)
+            {
+                var oData=item.dataValues.OtherJsonData;
+                item.dataValues.OtherJsonData=JSON.parse(oData);
+            }
+            return item;
+
+        });
+
+        callBack(undefined,CamObj);
     }).catch(function (err) {
         callBack(err,undefined);
     });
