@@ -68,10 +68,10 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
     }).then(function (CamObject) {
         var CamObj = CamObject.map(function (item) {
 
-            if(item.dataValues.OtherJsonData)
+            if(item.OtherJsonData)
             {
-                var oData=item.dataValues.OtherJsonData;
-                item.dataValues.OtherJsonData=JSON.parse(oData);
+                var oData=item.OtherJsonData;
+                item.OtherJsonData=JSON.parse(oData);
             }
             return item;
 
@@ -120,10 +120,10 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
     }).then(function (CamObject) {
         var CamObj = CamObject.map(function (item) {
 
-            if(item.dataValues.OtherJsonData)
+            if(item.OtherJsonData )
             {
-                var oData=item.dataValues.OtherJsonData;
-                item.dataValues.OtherJsonData=JSON.parse(oData);
+                var oData=item.OtherJsonData;
+                item.OtherJsonData=JSON.parse(oData);
             }
             return item;
 
