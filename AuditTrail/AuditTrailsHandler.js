@@ -55,6 +55,11 @@ module.exports.CreateAuditTrails = function (tenantId,companyId,iss,auditTrails,
                 CompanyId: companyId
             }
         ).then(function (cmp) {
+
+            if(cmp.OtherJsonData)
+            {
+                cmp.OtherJsonData=JSON.parse(cmp.OtherJsonData);
+            }
             callBack(undefined,cmp);
     }).catch(function (err) {
             callBack(err,undefined);
@@ -70,8 +75,7 @@ module.exports.GetAllAuditTrails = function (tenantId,companyId, callBack) {
 
             if(item.OtherJsonData)
             {
-                var oData=item.OtherJsonData;
-                item.OtherJsonData=JSON.parse(oData);
+                item.OtherJsonData=JSON.parse(item.OtherJsonData);
             }
             return item;
 
@@ -122,8 +126,8 @@ module.exports.GetAllAuditTrailsPaging =function(tenantId,companyId, application
 
             if(item.OtherJsonData )
             {
-                var oData=item.OtherJsonData;
-                item.OtherJsonData=JSON.parse(oData);
+                item.OtherJsonData=item.OtherJsonData;
+
             }
             return item;
 
