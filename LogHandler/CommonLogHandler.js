@@ -34,7 +34,7 @@ if (process.env.SYS_LOG_HOST && process.env.SYS_LOG_PORT) {
     transports.push(new (LogstashUDP)({
         port: process.env.SYS_LOG_PORT,
         appName: process.env.HOST_NAME,
-        host: SYS_LOG_HOST,
+        host: process.env.SYS_LOG_HOST,
         level: level
     }));
 }
