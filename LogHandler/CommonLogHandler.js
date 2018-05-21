@@ -1,59 +1,46 @@
-var winston = require('winston');
-require('winston-logstash-udp');
+var winston = require('winston'),
+    LogstashUDP = require('winston-logstash-udp').LogstashUDP;
 
-
-/*
-winston.add(winston.transports.File, { filename: 'D:/somefile.log' });
-
-var WriteLog = funnpm install ction(message)
-{
-    winston.log('info', 'Hello distributed log files!');
-    winston.info('Hello again distributed logs');
-};
-
-module.exports.WriteLog = WriteLog;
-*/
-//winston.addColors({debug: 'green',info:  'cyan',silly: 'magenta',warn:  'yellow',error: 'red'});
-
- var logger = new winston.Logger();
+const transports = [
+    new winston.transports.Console({
+        level: 'info',
+        colorize: true
+    })
+];
 
 var level = 'debug';
 
-if(process.env.LOG_LEVEL) {
+if (process.env.LOG_LEVEL) {
     level = process.env.LOG_LEVEL;
 }
 
-if (process.env.DEPLOYMENT_ENV == 'docker') {
+if (process.env.DEPLOYMENT_ENV != 'docker') {
+    if (process.env.LOG_PATH) {
+        transports.push(new (winston.transports.File)({
+                filename: process.env.LOG_PATH + '/logger.log', level: level, maxsize: 5242880, maxFiles: 10
+            }
+        ));
+    } else {
+        transports.push(new (winston.transports.File)({
+            filename: 'logger.log',
+            level: level,
+            maxsize: 5242880,
+            maxFiles: 10
+        }));
+    }
+}
 
-     logger.add(winston.transports.Console, {colorize: true, level: level});
-     //logger.add(winston.transports.File, { filename: 'logger.log' });
-
- }
- else {
-
-     logger.add(winston.transports.Console, {colorize: true, level: level});
-
-     if(process.env.LOG_PATH) {
-         logger.add(winston.transports.File, {filename: process.env.LOG_PATH + '/logger.log', level: level, maxsize:5242880, maxFiles:10});
-     }else{
-         logger.add(winston.transports.File, {filename: 'logger.log', level: level, maxsize:5242880, maxFiles:10});
-
-     }
- }
-
-
-if(process.env.SYS_LOG_HOST && process.env.SYS_LOG_PORT){
-
-
-    winston.add(winston.transports.LogstashUDP, {
+if (process.env.SYS_LOG_HOST && process.env.SYS_LOG_PORT) {
+    transports.push(new (LogstashUDP)({
         port: process.env.SYS_LOG_PORT,
         appName: process.env.HOST_NAME,
         host: SYS_LOG_HOST,
         level: level
-    });
-
+    }));
 }
 
-
+var logger = new (winston.Logger)({
+    transports: transports
+});
 
 module.exports.logger = logger;
