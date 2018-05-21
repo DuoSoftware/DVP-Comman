@@ -9,6 +9,7 @@ var redisport = config.Security.port;
 var redispass = config.Security.password;
 var redismode = config.Security.mode;
 var redisdb = config.Security.db;
+var common = config.Security.common;
 
 
 
@@ -96,26 +97,28 @@ var Secret = function(req, payload, done){
         var jti = payload.jti;
 
 
-        redisClient.get("token:iss:" + issuer + ":" + jti, function (err, key) {
+        if(common === true || common === "True") {
 
-            if (err) {
-                return done(err);
-            }
-            if (!key) {
-                return done(new Error('missing_secret'));
-            }
-            return done(null, key);
+            return done(null, payload.jti);
 
+        }else{
 
-        });
+            redisClient.get("token:iss:" + issuer + ":" + jti, function (err, key) {
+
+                if (err) {
+                    return done(err);
+                }
+                if (!key) {
+                    return done(new Error('missing_secret'));
+                }
+                return done(null, key);
+            });
+        }
     }else{
         done(new Error('wrong token format'));
 
 
     }
-
-
-
 
 };
 
