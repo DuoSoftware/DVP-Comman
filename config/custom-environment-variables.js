@@ -36,7 +36,8 @@ module.exports = {
             "hosts": "SYS_REDIS_SENTINEL_HOSTS",
             "port":"SYS_REDIS_SENTINEL_PORT",
             "name":"SYS_REDIS_SENTINEL_NAME"
-        }
+        },
+        "common" : "SYS_AUTH_COMMON"
 
     },
 
