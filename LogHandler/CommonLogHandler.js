@@ -1,18 +1,21 @@
 var winston = require('winston'),
     LogstashUDP = require('winston-logstash-udp').LogstashUDP;
 
-const transports = [
-    new winston.transports.Console({
-        level: 'info',
-        colorize: true
-    })
-];
 
 var level = 'debug';
 
 if (process.env.LOG_LEVEL) {
     level = process.env.LOG_LEVEL;
 }
+
+
+const transports = [
+    new winston.transports.Console({
+        level: level,
+        colorize: true
+    })
+];
+
 
 if (process.env.DEPLOYMENT_ENV != 'docker') {
     if (process.env.LOG_PATH) {
