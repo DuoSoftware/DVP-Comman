@@ -4,6 +4,7 @@
   "description": "Common data models and scripts for DVP",
   "main": "test.js",
   "dependencies": {
+    "async": "^2.6.1",
     "config": "^1.21.0",
     "deep-diff": "^0.3.4",
     "dustjs-linkedin": "^2.7.3",

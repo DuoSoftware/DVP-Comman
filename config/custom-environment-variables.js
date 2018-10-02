@@ -103,6 +103,10 @@ module.exports = {
         "clusterconfigserviceHost": "SYS_CLUSTERCONFIG_HOST",
         "clusterconfigservicePort": "SYS_CLUSTERCONFIG_PORT",
         "clusterconfigserviceVersion": "SYS_CLUSTERCONFIG_VERSION"
+    },
+    "HealthCheck":{
+        "DBs": "SYS_HEALTHCHECK_DBS",
+        "timeout": "SYS_HEALTHCHECK_TIMEOUT"
     }
 };
 

@@ -136,6 +136,11 @@ module.exports = {
       "clusterconfigserviceHost": "clusterconfig.app.veery.cloud",
       "clusterconfigservicePort": "8831",
       "clusterconfigserviceVersion": "1.0.0.0"
+    },
+
+    "HealthCheck":{
+       "DBs": "redis,pg", //"pg,redis,mongo,rabbitmq"
+       "timeout": 5000 //DB check timeout in ms
     }
 
 
