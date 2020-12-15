@@ -4,13 +4,13 @@ var validator = require('validator');
 var config = require('config');
 var logger = require('../LogHandler/CommonLogHandler.js').logger;
 
-function AddToRequest(company, tenant,session_id, priority, otherInfo, attributes, cb){
+function AddToRequest(company, tenant, session_id, priority, otherInfo, attributes, cb) {
 
 
     if (config.Services && config.Services.ardsServiceHost && config.Services.ardsServicePort && config.Services.ardsServiceVersion) {
 
         var url = format("http://{0}/DVP/API/{1}/ARDS/request", config.Services.ardsServiceHost, config.Services.ardsServiceVersion);
-        if (validator.isIP(config.Services.ardsServiceHost))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.ardsServiceHost))
             url = format("http://{0}:{1}/DVP/API/{2}/ARDS/request", config.Services.ardsServiceHost, config.Services.ardsServicePort, config.Services.ardsServiceVersion);
 
 
@@ -46,35 +46,35 @@ function AddToRequest(company, tenant,session_id, priority, otherInfo, attribute
                     return cb(true);
                 } else {
 
-                    logger.error("Registration Failed "+_error);
+                    logger.error("Registration Failed " + _error);
                     return cb(false);
 
                 }
             }
             catch (excep) {
 
-                logger.error("Registration Failed "+excep);
+                logger.error("Registration Failed " + excep);
                 return cb(false);
             }
 
         });
 
-    }else{
+    } else {
         return cb(false);
     }
 
 
 };
 
-function CreateComment(channel, channeltype, company, tenant, engid, author, engagement, cb){
+function CreateComment(channel, channeltype, company, tenant, engid, author, engagement, cb) {
 
     //http://localhost:3636/DVP/API/1.0.0.0/TicketByEngagement/754236638146859008/Comment
 
     if (config.Services && config.Services.ticketServiceHost && config.Services.ticketServicePort && config.Services.ticketServiceVersion) {
 
-        var url = format("http://{0}/DVP/API/{1}/TicketByEngagement/{2}/Comment", config.Services.ticketServiceHost, config.Services.ticketServiceVersion,engid);
-        if (validator.isIP(config.Services.ticketServiceHost))
-            url = format("http://{0}:{1}/DVP/API/{2}/TicketByEngagement/{3}/Comment", config.Services.ticketServiceHost, config.Services.ticketServicePort,config.Services.ticketServiceVersion, engid);
+        var url = format("http://{0}/DVP/API/{1}/TicketByEngagement/{2}/Comment", config.Services.ticketServiceHost, config.Services.ticketServiceVersion, engid);
+        if (config.Services.dynamicPort || validator.isIP(config.Services.ticketServiceHost))
+            url = format("http://{0}:{1}/DVP/API/{2}/TicketByEngagement/{3}/Comment", config.Services.ticketServiceHost, config.Services.ticketServicePort, config.Services.ticketServiceVersion, engid);
 
 
         var data = {
@@ -110,35 +110,35 @@ function CreateComment(channel, channeltype, company, tenant, engid, author, eng
                     return cb(true);
                 } else {
 
-                    logger.error("Comment creation Failed "+_error);
+                    logger.error("Comment creation Failed " + _error);
                     return cb(false);
 
                 }
             }
             catch (excep) {
 
-                logger.error("Comment creation Failed "+excep);
+                logger.error("Comment creation Failed " + excep);
                 return cb(false);
             }
 
         });
 
-    }else{
+    } else {
 
         return cb(false);
     }
 
 };
 
-function UpdateComment(tenant, company, cid,eid, cb){
+function UpdateComment(tenant, company, cid, eid, cb) {
 
     //http://localhost:3636/DVP/API/1.0.0.0/TicketByEngagement/754236638146859008/Comment
-///DVP/API/:version/Ticket/Comment/:id
+    ///DVP/API/:version/Ticket/Comment/:id
     if (config.Services && config.Services.ticketServiceHost && config.Services.ticketServicePort && config.Services.ticketServiceVersion) {
 
-        var url = format("http://{0}/DVP/API/{1}/Ticket/Comment/{2}", config.Services.ticketServiceHost, config.Services.ticketServiceVersion,cid);
-        if (validator.isIP(config.Services.ticketServiceHost))
-            url = format("http://{0}:{1}/DVP/API/{2}/Ticket/Comment/{3}", config.Services.ticketServiceHost, config.Services.ticketServicePort,config.Services.ticketServiceVersion, cid);
+        var url = format("http://{0}/DVP/API/{1}/Ticket/Comment/{2}", config.Services.ticketServiceHost, config.Services.ticketServiceVersion, cid);
+        if (config.Services.dynamicPort || validator.isIP(config.Services.ticketServiceHost))
+            url = format("http://{0}:{1}/DVP/API/{2}/Ticket/Comment/{3}", config.Services.ticketServiceHost, config.Services.ticketServicePort, config.Services.ticketServiceVersion, cid);
 
 
         var data = {
@@ -146,7 +146,7 @@ function UpdateComment(tenant, company, cid,eid, cb){
         };
 
 
-        console.log("UpdateComment . cid : " + cid +" eid : "+eid+" url"+url);
+        console.log("UpdateComment . cid : " + cid + " eid : " + eid + " url" + url);
         request({
             method: "PUT",
             url: url,
@@ -165,40 +165,40 @@ function UpdateComment(tenant, company, cid,eid, cb){
                     return cb(true);
                 } else {
 
-                    logger.error("Comment update Failed "+_error);
+                    logger.error("Comment update Failed " + _error);
                     return cb(false);
 
                 }
             }
             catch (excep) {
 
-                logger.error("Comment update Failed "+excep);
+                logger.error("Comment update Failed " + excep);
                 return cb(false);
             }
 
         });
 
-    }else{
+    } else {
 
         return cb(false);
     }
 
 };
 
-function CreateEngagement(channel, company, tenant, from, to, direction, session, data, user,channel_id,contact,  cb){
+function CreateEngagement(channel, company, tenant, from, to, direction, session, data, user, channel_id, contact, cb) {
 
-    if((config.Services && config.Services.interactionurl && config.Services.interactionport && config.Services.interactionversion)) {
+    if ((config.Services && config.Services.interactionurl && config.Services.interactionport && config.Services.interactionversion)) {
 
 
         var engagementURL = format("http://{0}/DVP/API/{1}/EngagementSessionForProfile", config.Services.interactionurl, config.Services.interactionversion);
-        if (validator.isIP(config.Services.interactionurl))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.interactionurl))
             engagementURL = format("http://{0}:{1}/DVP/API/{2}/EngagementSessionForProfile", config.Services.interactionurl, config.Services.interactionport, config.Services.interactionversion);
 
-        var engagementData =  {
+        var engagementData = {
             engagement_id: session,
             channel: channel,
             direction: direction,
-            channel_from:from,
+            channel_from: from,
             channel_to: to,
             body: data,
             user: user,
@@ -212,7 +212,7 @@ function CreateEngagement(channel, company, tenant, from, to, direction, session
             method: "POST",
             url: engagementURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
+                authorization: "bearer " + config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
             },
             json: engagementData
@@ -220,39 +220,39 @@ function CreateEngagement(channel, company, tenant, from, to, direction, session
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body && _response.body.IsSuccess) {
+                if (!_error && _response && _response.statusCode == 200 && _response.body && _response.body.IsSuccess) {
 
-                    return cb(true,_response.body.Result);
+                    return cb(true, _response.body.Result);
 
-                }else{
+                } else {
 
-                    logger.error("There is an error in  create engagements for this session "+ session);
-                    return cb(false,{});
+                    logger.error("There is an error in  create engagements for this session " + session);
+                    return cb(false, {});
 
 
                 }
             }
             catch (excep) {
 
-                return cb(false,{});
+                return cb(false, {});
             }
         });
-    }else{
+    } else {
 
-        return cb(false,{});
+        return cb(false, {});
     }
 };
 
-function CreateTicket(channel,session,profile, company, tenant, type, subjecct, description, priority, tags, cb){
+function CreateTicket(channel, session, profile, company, tenant, type, subjecct, description, priority, tags, cb) {
 
-    if((config.Services && config.Services.ticketServiceHost && config.Services.ticketServicePort && config.Services.ticketServiceVersion)) {
+    if ((config.Services && config.Services.ticketServiceHost && config.Services.ticketServicePort && config.Services.ticketServiceVersion)) {
 
 
         var ticketURL = format("http://{0}/DVP/API/{1}/Ticket", config.Services.ticketServiceHost, config.Services.ticketServiceVersion);
-        if (validator.isIP(config.Services.ticketServiceHost))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.ticketServiceHost))
             ticketURL = format("http://{0}:{1}/DVP/API/{2}/Ticket", config.Services.ticketServiceHost, config.Services.ticketServicePort, config.Services.ticketServiceVersion);
 
-        var ticketData =  {
+        var ticketData = {
 
             "type": type,
             "subject": subjecct,
@@ -260,7 +260,7 @@ function CreateTicket(channel,session,profile, company, tenant, type, subjecct, 
             "description": description,
             "priority": priority,
             "status": "new",
-            "requester":profile,
+            "requester": profile,
             "engagement_session": session,
             "channel": channel,
             "tags": tags,
@@ -270,7 +270,7 @@ function CreateTicket(channel,session,profile, company, tenant, type, subjecct, 
             method: "POST",
             url: ticketURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
+                authorization: "bearer " + config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
             },
             json: ticketData
@@ -282,9 +282,9 @@ function CreateTicket(channel,session,profile, company, tenant, type, subjecct, 
 
                     return cb(true, _response.body.reference);
 
-                }else{
+                } else {
 
-                    logger.error("There is an error in  create ticket for this session "+ session);
+                    logger.error("There is an error in  create ticket for this session " + session);
 
                     return cb(false, "");
 
@@ -297,26 +297,26 @@ function CreateTicket(channel,session,profile, company, tenant, type, subjecct, 
 
             }
         });
-    }else{
+    } else {
 
         return cb(false, "");
     }
 }
 
-function RegisterCronJob(company, tenant, time, id,mainServer, cb){
+function RegisterCronJob(company, tenant, time, id, mainServer, cb) {
 
-    if((config.Services && config.Services.cronurl && config.Services.cronport && config.Services.cronversion)) {
+    if ((config.Services && config.Services.cronurl && config.Services.cronport && config.Services.cronversion)) {
 
 
         var cronURL = format("http://{0}/DVP/API/{1}/Cron", config.Services.cronurl, config.Services.cronversion);
-        if (validator.isIP(config.Services.cronurl))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.cronurl))
             cronURL = format("http://{0}:{1}/DVP/API/{2}/Cron", config.Services.cronurl, config.Services.cronport, config.Services.cronversion);
 
-        var engagementData =  {
+        var engagementData = {
 
             Reference: id,
             Description: "Direct message twitter",
-            CronePattern: format( "*/{0} * * * *",time),
+            CronePattern: format("*/{0} * * * *", time),
             CallbackURL: mainServer,
             CallbackData: ""
 
@@ -327,7 +327,7 @@ function RegisterCronJob(company, tenant, time, id,mainServer, cb){
             method: "POST",
             url: cronURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
+                authorization: "bearer " + config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
             },
             json: engagementData
@@ -335,39 +335,39 @@ function RegisterCronJob(company, tenant, time, id,mainServer, cb){
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body && _response.body.IsSuccess) {
+                if (!_error && _response && _response.statusCode == 200 && _response.body && _response.body.IsSuccess) {
 
-                    return cb(true,_response.body.Result);
+                    return cb(true, _response.body.Result);
 
-                }else{
+                } else {
 
                     logger.error("There is an error in  cron registration for this");
-                    return cb(false,{});
+                    return cb(false, {});
 
 
                 }
             }
             catch (excep) {
 
-                return cb(false,{});
+                return cb(false, {});
 
             }
         });
-    }else{
+    } else {
 
-        return cb(false,{});
+        return cb(false, {});
     }
 
 }
 
-function StartStopCronJob(company, tenant, id,action,cb){
+function StartStopCronJob(company, tenant, id, action, cb) {
 
-    if((config.Services && config.Services.cronurl && config.Services.cronport && config.Services.cronversion)) {
+    if ((config.Services && config.Services.cronurl && config.Services.cronport && config.Services.cronversion)) {
 
 
-        var cronURL = format("http://{0}/DVP/API/{1}/Cron/Reference/{2}/Action/{3}", config.Services.cronurl, config.Services.cronversion,id,action);
-        if (validator.isIP(config.Services.cronurl))
-            cronURL = format("http://{0}:{1}/DVP/API/{2}/Cron/Reference/{3}/Action/{4}", config.Services.cronurl, config.Services.cronport, config.Services.cronversion,id,action);
+        var cronURL = format("http://{0}/DVP/API/{1}/Cron/Reference/{2}/Action/{3}", config.Services.cronurl, config.Services.cronversion, id, action);
+        if (config.Services.dynamicPort || validator.isIP(config.Services.cronurl))
+            cronURL = format("http://{0}:{1}/DVP/API/{2}/Cron/Reference/{3}/Action/{4}", config.Services.cronurl, config.Services.cronport, config.Services.cronversion, id, action);
 
         /* var engagementData =  {
 
@@ -384,48 +384,48 @@ function StartStopCronJob(company, tenant, id,action,cb){
             method: "POST",
             url: cronURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
+                authorization: "bearer " + config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
             }
         }, function (_error, _response, datax) {
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body && _response.body.IsSuccess) {
+                if (!_error && _response && _response.statusCode == 200 && _response.body && _response.body.IsSuccess) {
 
-                    return cb(true,_response.body.Result);
+                    return cb(true, _response.body.Result);
 
-                }else{
+                } else {
 
                     logger.error("There is an error in  StopCronJob for this");
-                    return cb(false,{});
+                    return cb(false, {});
 
 
                 }
             }
             catch (excep) {
 
-                return cb(false,{});
+                return cb(false, {});
 
             }
         });
-    }else{
+    } else {
 
-        return cb(false,{});
+        return cb(false, {});
     }
 
 }
 
-function GetCallRule(company, tenant, ani, dnis, category,cb){
+function GetCallRule(company, tenant, ani, dnis, category, cb) {
 
     //http://ruleservice.app.veery.cloud/DVP/API/1.0.0.0/CallRuleApi/CallRule/Outbound/ANI/234/DNIS/3324323432/Category/SMS
 
-    if((config.Services && config.Services.ruleserviceurl && config.Services.ruleserviceport && config.Services.ruleserviceversion)) {
+    if ((config.Services && config.Services.ruleserviceurl && config.Services.ruleserviceport && config.Services.ruleserviceversion)) {
 
 
-        var callURL = format("http://{0}/DVP/API/{1}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceversion,ani, dnis,category);
-        if (validator.isIP(config.Services.ruleserviceurl))
-            callURL = format("http://{0}:{1}/DVP/API/{2}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceport, config.Services.ruleserviceversion,ani, dnis,category);
+        var callURL = format("http://{0}/DVP/API/{1}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceversion, ani, dnis, category);
+        if (config.Services.dynamicPort || validator.isIP(config.Services.ruleserviceurl))
+            callURL = format("http://{0}:{1}/DVP/API/{2}/CallRuleApi/CallRule/Outbound/ANI/{2}/DNIS/{3}/Category/{4}", config.Services.ruleserviceurl, config.Services.ruleserviceport, config.Services.ruleserviceversion, ani, dnis, category);
 
         /* var engagementData =  {
 
@@ -443,7 +443,7 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
             url: callURL,
             json: true,
             headers: {
-                authorization: "bearer "+config.Services.accessToken,
+                authorization: "bearer " + config.Services.accessToken,
                 companyinfo: format("{0}:{1}", tenant, company)
             }
         }, function (_error, _response, datax) {
@@ -453,41 +453,41 @@ function GetCallRule(company, tenant, ani, dnis, category,cb){
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& datax && datax.IsSuccess) {
+                if (!_error && _response && _response.statusCode == 200 && datax && datax.IsSuccess) {
 
-                    return cb(true,datax.Result);
+                    return cb(true, datax.Result);
 
-                }else{
+                } else {
 
                     logger.error("There is an error in  StopCronJob for this");
-                    return cb(false,{});
+                    return cb(false, {});
 
 
                 }
             }
             catch (excep) {
 
-                return cb(false,{});
+                return cb(false, {});
 
             }
         });
-    }else{
+    } else {
 
-        return cb(false,{});
+        return cb(false, {});
     }
 
 
 }
 
-function CallDynamicConfigRouting(from, to, message, direction,cb){
+function CallDynamicConfigRouting(from, to, message, direction, cb) {
 
     //http://ruleservice.app.veery.cloud/DVP/API/1.0.0.0/CallRuleApi/CallRule/Outbound/ANI/234/DNIS/3324323432/Category/SMS
 
-    if((config.Services && config.Services.dynamicconfigurl && config.Services.dynamicconfigport && config.Services.dynamicconfigversion)) {
+    if ((config.Services && config.Services.dynamicconfigurl && config.Services.dynamicconfigport && config.Services.dynamicconfigversion)) {
 
 
         var callURL = format("http://{0}/DVP/API/{1}/DynamicConfigGenerator/SMS/Routing", config.Services.dynamicconfigurl, config.Services.dynamicconfigversion);
-        if (validator.isIP(config.Services.dynamicconfigurl))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.dynamicconfigurl))
             callURL = format("http://{0}:{1}/DVP/API/{2}/DynamicConfigGenerator/SMS/Routing", config.Services.dynamicconfigurl, config.Services.dynamicconfigport, config.Services.dynamicconfigversion);
 
         /* var engagementData =  {
@@ -500,11 +500,11 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
 
          };*/
 
-        var smsData ={
-            destination_number:to,
-            from_number:from,
-            short_message:message,
-            direction:direction
+        var smsData = {
+            destination_number: to,
+            from_number: from,
+            short_message: message,
+            direction: direction
 
 
         };
@@ -513,18 +513,18 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
             method: "POST",
             url: callURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken
+                authorization: "bearer " + config.Services.accessToken
             },
             json: smsData
         }, function (_error, _response, datax) {
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body) {
+                if (!_error && _response && _response.statusCode == 200 && _response.body) {
 
-                    return cb(true,_response.body);
+                    return cb(true, _response.body);
 
-                }else{
+                } else {
 
                     logger.error("There is an error in  dynamic configuration generator call for this");
                     return cb(false);
@@ -537,7 +537,7 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
 
             }
         });
-    }else{
+    } else {
 
         return cb(false);
     }
@@ -545,16 +545,16 @@ function CallDynamicConfigRouting(from, to, message, direction,cb){
 
 }
 
-function CallHttProgrammingAPI(from, to, message, id, cb){
+function CallHttProgrammingAPI(from, to, message, id, cb) {
 
 
 
 
-    if((config.Services && config.Services.httprogrammingurl && config.Services.httprogrammingport && config.Services.httprogrammingversion)) {
+    if ((config.Services && config.Services.httprogrammingurl && config.Services.httprogrammingport && config.Services.httprogrammingversion)) {
 
 
         var callURL = format("http://{0}/sms", config.Services.httprogrammingurl, config.Services.httprogrammingversion);
-        if (validator.isIP(config.Services.httprogrammingurl))
+        if (config.Services.dynamicPort || validator.isIP(config.Services.httprogrammingurl))
             callURL = format("http://{0}:{1}/sms", config.Services.httprogrammingurl, config.Services.httprogrammingport, config.Services.httprogrammingversion);
 
         /* var engagementData =  {
@@ -567,11 +567,11 @@ function CallHttProgrammingAPI(from, to, message, id, cb){
 
          };*/
 
-        var smsData ={
-            to:to,
-            from:from,
-            content:message,
-            to:id
+        var smsData = {
+            to: to,
+            from: from,
+            content: message,
+            to: id
 
 
         };
@@ -580,18 +580,18 @@ function CallHttProgrammingAPI(from, to, message, id, cb){
             method: "POST",
             url: callURL,
             headers: {
-                authorization: "bearer "+config.Services.accessToken
+                authorization: "bearer " + config.Services.accessToken
             },
             form: smsData
         }, function (_error, _response, datax) {
 
             try {
 
-                if (!_error && _response && _response.statusCode == 200&& _response.body === "ACK/Jasmin" ) {
+                if (!_error && _response && _response.statusCode == 200 && _response.body === "ACK/Jasmin") {
 
-                    return cb(true,_response.body.Result);
+                    return cb(true, _response.body.Result);
 
-                }else{
+                } else {
 
                     logger.error("There is an error in httprogramingapi call for this");
                     return cb(false);
@@ -604,7 +604,7 @@ function CallHttProgrammingAPI(from, to, message, id, cb){
 
             }
         });
-    }else{
+    } else {
 
         return cb(false);
     }
@@ -621,5 +621,5 @@ module.exports.UpdateComment = UpdateComment;
 module.exports.StartStopCronJob = StartStopCronJob;
 module.exports.GetCallRule = GetCallRule;
 module.exports.CallDynamicConfigRouting = CallDynamicConfigRouting;
-module.exports.CallHttProgrammingAPI =CallHttProgrammingAPI;
+module.exports.CallHttProgrammingAPI = CallHttProgrammingAPI;
 
